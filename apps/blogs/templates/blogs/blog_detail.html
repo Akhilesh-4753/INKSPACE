@@ -72,10 +72,12 @@
         </div>
       </div>
 
-      <!-- Hero Cover Image -->
-      <div class="rounded-4 overflow-hidden mb-5 shadow-sm border">
-        <img src="{{ blog.get_cover_image_url }}" alt="{{ blog.title }}" class="w-100 object-fit-cover" style="max-height: 480px;">
-      </div>
+      <!-- Hero Cover Image (Rendered only when cover image is available) -->
+      {% if blog.get_cover_image_url %}
+        <div class="rounded-4 overflow-hidden mb-5 shadow-sm border">
+          <img src="{{ blog.get_cover_image_url }}" alt="{{ blog.title }}" class="w-100 object-fit-cover" style="max-height: 480px;">
+        </div>
+      {% endif %}
 
       <!-- Article Body Content -->
       <article class="article-content font-serif fs-5 text-dark" style="line-height: 1.85;">
@@ -149,8 +151,12 @@
           <div class="d-flex flex-column gap-3">
             {% for other_blog in more_from_author %}
               <a href="{% url 'blogs:blog_detail' slug=other_blog.slug %}" class="text-decoration-none text-dark d-flex gap-3 align-items-center group">
-                <div class="rounded-3 overflow-hidden flex-shrink-0 border" style="width: 68px; height: 54px; background: #FFEDD5;">
-                  <img src="{{ other_blog.get_cover_image_url }}" alt="{{ other_blog.title }}" class="w-100 h-100 object-fit-cover">
+                <div class="rounded-3 overflow-hidden flex-shrink-0 border d-flex align-items-center justify-content-center" style="width: 68px; height: 54px; background: #FFEDD5;">
+                  {% if other_blog.get_cover_image_url %}
+                    <img src="{{ other_blog.get_cover_image_url }}" alt="{{ other_blog.title }}" class="w-100 h-100 object-fit-cover">
+                  {% else %}
+                    <i class="bi bi-journal-text fs-5" style="color: #C65D24 !important;"></i>
+                  {% endif %}
                 </div>
                 <div>
                   <h3 class="fw-semibold small font-serif mb-1 line-clamp-2 hover-text-orange">{{ other_blog.title }}</h3>

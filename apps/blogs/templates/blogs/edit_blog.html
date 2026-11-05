@@ -106,17 +106,35 @@
         
         <!-- Cover Image Upload Box -->
         <div class="card border rounded-4 shadow-sm p-4 bg-white mb-4">
-          <label class="form-label fw-bold text-dark font-serif fs-6 mb-2">Cover Image <span class="text-danger">*</span></label>
+          <label class="form-label fw-bold text-dark font-serif fs-6 mb-2">Cover Image <span class="text-muted fw-normal small">(Optional)</span></label>
           
           <div class="upload-dropzone border rounded-3 p-3 text-center bg-light position-relative">
-            {% if blog.cover_image %}
-              <div class="position-relative mb-2">
+            {% if blog.get_cover_image_url %}
+              <!-- Existing Cover Image Preview -->
+              <div class="position-relative mb-2" id="currentCoverBox">
                 <img id="imagePreviewElement" src="{{ blog.get_cover_image_url }}" alt="{{ blog.title }}" class="img-fluid rounded-2 object-fit-cover w-100" style="max-height: 180px;">
+                <div class="d-flex justify-content-between align-items-center mt-2 px-1">
+                  <span class="text-muted small" style="font-size: 0.75rem;"><i class="bi bi-image me-1"></i> Current cover</span>
+                  <div class="form-check form-check-inline m-0">
+                    <input class="form-check-input" type="checkbox" name="remove_cover_image" id="removeCoverImage" value="1">
+                    <label class="form-check-label text-danger small fw-medium" for="removeCoverImage" style="font-size: 0.75rem; cursor: pointer;">Remove</label>
+                  </div>
+                </div>
+              </div>
+            {% else %}
+              <!-- No Image Placeholder -->
+              <div class="py-3 text-center" id="noCoverPrompt">
+                <i class="bi bi-image fs-1 mb-1 d-block" style="color: #C65D24 !important;"></i>
+                <div class="small fw-semibold text-dark">No cover image set</div>
+                <div class="text-muted" style="font-size: 0.72rem;">Upload an optional cover image below</div>
+              </div>
+              <div id="newImagePreviewWrapper" class="d-none mb-2">
+                <img id="imagePreviewElement" src="#" alt="New Preview" class="img-fluid rounded-2 object-fit-cover w-100" style="max-height: 180px;">
               </div>
             {% endif %}
             
             <input type="file" name="cover_image" id="id_cover_image" class="form-control form-control-sm mt-2" accept="image/*">
-            <div class="text-muted mt-1" style="font-size: 0.72rem;">Upload a new image to replace current cover</div>
+            <div class="text-muted mt-1" style="font-size: 0.72rem;">PNG, JPG (Max 5 MB) &bull; Leave empty to keep current</div>
           </div>
         </div>
 
@@ -267,6 +285,10 @@
   // Cover Image Preview
   const imageInput = document.getElementById('id_cover_image');
   const previewImg = document.getElementById('imagePreviewElement');
+  const newPreviewWrapper = document.getElementById('newImagePreviewWrapper');
+  const noCoverPrompt = document.getElementById('noCoverPrompt');
+  const removeCoverCheckbox = document.getElementById('removeCoverImage');
+  const currentCoverBox = document.getElementById('currentCoverBox');
 
   if (imageInput && previewImg) {
     imageInput.addEventListener('change', function(e) {
@@ -275,8 +297,25 @@
         const reader = new FileReader();
         reader.onload = function(event) {
           previewImg.src = event.target.result;
+          if (newPreviewWrapper) newPreviewWrapper.classList.remove('d-none');
+          if (noCoverPrompt) noCoverPrompt.classList.add('d-none');
+          if (removeCoverCheckbox) {
+            removeCoverCheckbox.checked = false;
+            if (currentCoverBox) currentCoverBox.style.opacity = '1';
+          }
         };
         reader.readAsDataURL(file);
+      }
+    });
+  }
+
+  if (removeCoverCheckbox && currentCoverBox) {
+    removeCoverCheckbox.addEventListener('change', function() {
+      if (this.checked) {
+        currentCoverBox.style.opacity = '0.35';
+        if (imageInput) imageInput.value = '';
+      } else {
+        currentCoverBox.style.opacity = '1';
       }
     });
   }

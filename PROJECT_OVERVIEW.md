@@ -36,7 +36,7 @@ To satisfy the primary goal of mastering production-grade Django MVT development
 | `src/pages/BlogDetailPage.tsx` | `apps/blogs/views.py::blog_detail()` + `templates/blogs/blog_detail.html` | MVT View & Template: Fetches story by slug, increments views atomically via `F()`, author sidebar, and follow toggle. |
 | `src/pages/CreateBlogPage.tsx` | `apps/blogs/views.py::create_blog()` + `templates/blogs/create_blog.html` | MVT Form & View: `BlogForm` ModelForm, image upload, toolbar formatting, and Gemini AI modal integration. |
 | `src/pages/EditBlogPage.tsx` | `apps/blogs/views.py::edit_blog()` + `templates/blogs/edit_blog.html` | MVT View: Owner-only authorization check (`blog.author == request.user`), form pre-population, and updates. |
-| `src/pages/MyBlogsPage.tsx` | `apps/blogs/views.py::my_blogs()` + `templates/blogs/my_blogs.html` | MVT Dashboard: Filters user's posts, computes All/Published/Draft tab counts, and provides card/table views. |
+| `src/pages/MyBlogsPage.tsx` | `apps/blogs/views.py::my_blogs()` + `templates/blogs/my_blogs.html` | MVT Dashboard: Filters user's posts, computes All/Published/Draft tab counts, and renders responsive vertical card list with View, Edit, and Delete actions. |
 | `src/pages/LoginPage.tsx` | `apps/accounts/views.py::login_view()` + `templates/accounts/login.html` | MVT Auth: `LoginForm` supporting email/username resolution, Django `authenticate()`, and "Remember me" session expiry. |
 | `src/pages/SignupPage.tsx` | `apps/accounts/views.py::signup_view()` + `templates/accounts/signup.html` | MVT Auth: `SignUpForm` with name splitting, password validation, and auto-login after creation. |
 | `src/pages/ProfilePage.tsx` | `apps/accounts/views.py::profile_view()` + `templates/accounts/profile.html` | MVT Profile: `ProfileForm` managing bio, role, and avatar. |
@@ -244,6 +244,7 @@ erDiagram
 - **`title`**: `models.CharField(max_length=255)`
 - **`slug`**: `models.SlugField(max_length=300, unique=True, blank=True)` – auto-generated via `slugify()` with collision avoidance.
 - **`description`**: `models.CharField(max_length=250)` – short summary for cards and search results.
+- **`cover_image`**: `models.ImageField(upload_to='blog_covers/', blank=True, null=True)` – optional article cover image (no automatic hardcoded default).
 - **`category`**: Choices: `Travel`, `Technology`, `Lifestyle`, `Food`, `Education`, `Health`.
 - **`content`**: `models.TextField()` – HTML/Markdown article body.
 - **`status`**: Choices: `Draft`, `Published`.

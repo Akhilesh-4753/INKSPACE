@@ -128,15 +128,22 @@ class Blog(models.Model):
     def get_cover_image_url(self):
         """
         Return the proper URL for the blog cover image.
-        Supports both local uploaded files in /media/ and external URLs (e.g. Unsplash),
-        with an elegant editorial fallback.
+        Supports both local uploaded files in /media/ and external URLs (e.g. Unsplash).
+        Returns None if no cover image is uploaded or assigned.
         """
         if not self.cover_image:
-            return "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80"
+            return None
         val = str(self.cover_image).strip()
+        if not val:
+            return None
         if val.startswith("http://") or val.startswith("https://"):
             return val
         try:
             return self.cover_image.url
         except Exception:
-            return "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80"
+            return None
+
+    @property
+    def has_cover_image(self):
+        """Check if the blog has a valid cover image."""
+        return bool(self.get_cover_image_url)

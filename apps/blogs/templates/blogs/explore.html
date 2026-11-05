@@ -40,12 +40,20 @@
     {% for story in blogs %}
       <div class="col">
         <div class="card h-100 border rounded-4 shadow-sm overflow-hidden bg-white hover-shadow transition-all">
-          <div class="position-relative" style="height: 190px;">
-            <img src="{{ story.get_cover_image_url }}" alt="{{ story.title }}" class="w-100 h-100 object-fit-cover">
-            <span class="badge position-absolute top-0 start-0 m-3 px-2 py-1 rounded-pill" style="background-color: #FFEDD5; color: #C65D24; font-size: 0.72rem; border: 1px solid rgba(198, 93, 36, 0.15);">
-              {{ story.category }}
-            </span>
-          </div>
+          {% if story.get_cover_image_url %}
+            <div class="position-relative" style="height: 190px;">
+              <img src="{{ story.get_cover_image_url }}" alt="{{ story.title }}" class="w-100 h-100 object-fit-cover">
+              <span class="badge position-absolute top-0 start-0 m-3 px-2 py-1 rounded-pill" style="background-color: #FFEDD5; color: #C65D24; font-size: 0.72rem; border: 1px solid rgba(198, 93, 36, 0.15);">
+                {{ story.category }}
+              </span>
+            </div>
+          {% else %}
+            <div class="px-4 pt-4 pb-0">
+              <span class="badge rounded-pill px-2.5 py-1" style="background-color: #FFEDD5; color: #C65D24; font-size: 0.72rem; border: 1px solid rgba(198, 93, 36, 0.15);">
+                {{ story.category }}
+              </span>
+            </div>
+          {% endif %}
 
           <div class="card-body p-4 d-flex flex-column">
             <h2 class="h5 font-serif fw-bold mb-2">

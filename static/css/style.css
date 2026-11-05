@@ -490,3 +490,31 @@ body.bg-page {
   border-color: #FDBA74 !important;
   color: var(--ink-hover) !important;
 }
+
+/* ================= My Blogs Card Improvements ================= */
+.blog-thumbnail-wrapper {
+  background-color: var(--ink-bg);
+  border-color: var(--ink-border) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+@media (max-width: 767.98px) {
+  .blog-thumbnail-wrapper {
+    max-width: 100% !important;
+    height: 180px !important;
+  }
+}
+
+.hover-shadow {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.hover-shadow:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(198, 93, 36, 0.08), 0 8px 10px -6px rgba(198, 93, 36, 0.04) !important;
+  border-color: #FDBA74 !important;
+}
+
+.hover-text-orange:hover {
+  color: var(--ink-primary) !important;
+}

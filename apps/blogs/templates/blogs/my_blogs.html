@@ -12,17 +12,7 @@
       <h1 class="h3 fw-bold font-serif mb-1 text-dark">My Blogs</h1>
       <p class="text-secondary small mb-0">Manage, organize, and track your published stories and drafts.</p>
     </div>
-    <div class="d-flex align-items-center gap-2">
-      <!-- Responsive Mobile View Switcher (Visible on mobile/tablet) -->
-      <div class="btn-group btn-group-sm d-md-none" role="group" aria-label="Mobile view switcher">
-        <button type="button" class="btn btn-outline-secondary active" id="mobileCardViewBtn" title="Card View">
-          <i class="bi bi-grid"></i> Cards
-        </button>
-        <button type="button" class="btn btn-outline-secondary" id="mobileTableViewBtn" title="Table View">
-          <i class="bi bi-table"></i> Table
-        </button>
-      </div>
-
+    <div>
       <a href="{% url 'blogs:create_blog' %}" class="btn btn-orange-primary d-inline-flex align-items-center gap-2 rounded-pill px-4 py-2 fw-medium shadow-sm" style="background-color: #C65D24; border-color: #C65D24;">
         <i class="bi bi-plus-lg"></i>
         <span>Write a New Blog</span>
@@ -32,137 +22,125 @@
 
   <!-- Status Filter Tabs (Scrollable on small screens) -->
   <div class="d-flex align-items-center gap-2 mb-4 overflow-x-auto text-nowrap pb-2 scrollbar-none">
-    <a href="{% url 'blogs:my_blogs' %}?status=all" class="btn btn-sm rounded-pill px-3 py-1 fw-medium {% if status_filter == 'all' %}btn-dark{% else %}btn-outline-secondary border bg-white{% endif %}">
+    <a href="{% url 'blogs:my_blogs' %}?status=all" class="btn btn-sm rounded-pill px-3 py-1.5 fw-medium {% if status_filter == 'all' %}btn-dark text-white{% else %}btn-outline-secondary border bg-white{% endif %}">
       All <span class="badge bg-secondary-subtle text-dark rounded-pill ms-1">({{ total_count }})</span>
     </a>
-    <a href="{% url 'blogs:my_blogs' %}?status=published" class="btn btn-sm rounded-pill px-3 py-1 fw-medium {% if status_filter == 'published' %}btn-orange-primary{% else %}btn-outline-secondary border bg-white{% endif %}" {% if status_filter == 'published' %}style="background-color: #C65D24; border-color: #C65D24; color: #FFFFFF;"{% endif %}>
+    <a href="{% url 'blogs:my_blogs' %}?status=published" class="btn btn-sm rounded-pill px-3 py-1.5 fw-medium {% if status_filter == 'published' %}text-white{% else %}btn-outline-secondary border bg-white{% endif %}" {% if status_filter == 'published' %}style="background-color: #C65D24; border-color: #C65D24;"{% endif %}>
       Published <span class="badge rounded-pill ms-1" style="background-color: #FFEDD5; color: #C65D24;">({{ published_count }})</span>
     </a>
-    <a href="{% url 'blogs:my_blogs' %}?status=draft" class="btn btn-sm rounded-pill px-3 py-1 fw-medium {% if status_filter == 'draft' %}btn-orange-secondary border-0{% else %}btn-outline-secondary border bg-white{% endif %}" {% if status_filter == 'draft' %}style="background-color: #FFEDD5; color: #C65D24; border: 1px solid #FDBA74;"{% endif %}>
+    <a href="{% url 'blogs:my_blogs' %}?status=draft" class="btn btn-sm rounded-pill px-3 py-1.5 fw-medium {% if status_filter == 'draft' %}text-white{% else %}btn-outline-secondary border bg-white{% endif %}" {% if status_filter == 'draft' %}style="background-color: #C65D24; border-color: #C65D24;"{% endif %}>
       Drafts <span class="badge bg-secondary-subtle text-dark rounded-pill ms-1">({{ drafts_count }})</span>
     </a>
   </div>
 
-  <!-- ================= DESKTOP TABLE VIEW (Preserved for md and up) ================= -->
-  <div id="desktopTableViewContainer" class="card border rounded-4 shadow-sm bg-white overflow-hidden mb-5 d-none d-md-block">
-    <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0">
-        <thead class="table-light text-secondary small text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.05em; background-color: #FFF7ED;">
-          <tr>
-            <th scope="col" class="ps-4 py-3" style="width: 50px;">#</th>
-            <th scope="col" class="py-3">Title</th>
-            <th scope="col" class="py-3">Category</th>
-            <th scope="col" class="py-3">Status</th>
-            <th scope="col" class="py-3">Date</th>
-            <th scope="col" class="text-end pe-4 py-3">Actions</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y">
-          {% for blog in blogs %}
-            <tr>
-              <td class="ps-4 text-muted small fw-mono">{{ forloop.counter }}</td>
-              <td class="py-3">
-                <a href="{% url 'blogs:blog_detail' slug=blog.slug %}" class="fw-semibold text-dark text-decoration-none font-serif hover-text-orange">
-                  {{ blog.title }}
-                </a>
-              </td>
-              <td class="py-3 text-secondary small">{{ blog.category }}</td>
-              <td class="py-3">
+  <!-- ================= VERTICAL CARD-BASED LIST ================= -->
+  <div class="d-flex flex-column gap-3 mb-5" id="myBlogsCardList">
+    {% for blog in blogs %}
+      <div class="card border rounded-4 shadow-sm bg-white overflow-hidden hover-shadow transition-all">
+        <div class="card-body p-3 p-md-4">
+          <div class="row g-3 g-md-4 align-items-center">
+            
+            <!-- Thumbnail Column (Desktop: 200px, Mobile: Full width) -->
+            <div class="col-12 col-md-auto">
+              <div class="blog-thumbnail-wrapper rounded-3 overflow-hidden border d-flex align-items-center justify-content-center mx-auto mx-md-0" style="background-color: #FFF7ED; width: 100%; max-width: 200px; height: 130px;">
+                {% if blog.get_cover_image_url %}
+                  <img src="{{ blog.get_cover_image_url }}" alt="{{ blog.title }}" class="w-100 h-100 object-fit-cover">
+                {% else %}
+                  <div class="text-center p-3">
+                    <i class="bi bi-journal-text fs-2 d-block" style="color: #C65D24;"></i>
+                    <span class="text-muted" style="font-size: 0.72rem;">No cover image</span>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Content Column -->
+            <div class="col-12 col-md d-flex flex-column">
+              
+              <!-- Badges & Date Row -->
+              <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+                <span class="badge rounded-pill px-2.5 py-1 fw-semibold text-uppercase" style="background-color: #FFEDD5; color: #C65D24; font-size: 0.72rem; letter-spacing: 0.04em; border: 1px solid rgba(198, 93, 36, 0.15);">
+                  {{ blog.category }}
+                </span>
+
                 {% if blog.status == 'Published' %}
-                  <span class="badge rounded-pill px-3 py-1 fw-medium" style="background-color: #ECFDF5; color: #065F46; border: 1px solid rgba(5, 150, 105, 0.2);">
-                    Published
+                  <span class="badge rounded-pill px-2.5 py-1 fw-medium" style="background-color: #ECFDF5; color: #065F46; font-size: 0.72rem; border: 1px solid rgba(5, 150, 105, 0.2);">
+                    <i class="bi bi-check-circle-fill me-1"></i> Published
                   </span>
                 {% else %}
-                  <span class="badge rounded-pill px-3 py-1 fw-medium" style="background-color: #FFEDD5; color: #C65D24; border: 1px solid rgba(198, 93, 36, 0.2);">
-                    Draft
+                  <span class="badge rounded-pill px-2.5 py-1 fw-medium" style="background-color: #FFFBEB; color: #B45309; font-size: 0.72rem; border: 1px solid rgba(217, 119, 6, 0.25);">
+                    <i class="bi bi-pencil-fill me-1"></i> Draft
                   </span>
                 {% endif %}
-              </td>
-              <td class="py-3 text-muted small">{{ blog.created_at|date:"M d, Y" }}</td>
-              <td class="text-end pe-4 py-3">
-                <div class="d-inline-flex gap-2">
-                  <a href="{% url 'blogs:edit_blog' slug=blog.slug %}" class="btn btn-sm btn-light text-secondary rounded-circle p-2" title="Edit story" style="width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center;">
-                    <i class="bi bi-pencil"></i>
+
+                <span class="text-muted small ms-sm-auto" style="font-size: 0.78rem;">
+                  <i class="bi bi-calendar3 me-1"></i> {{ blog.created_at|date:"M d, Y" }}
+                </span>
+              </div>
+
+              <!-- Title -->
+              <h2 class="h5 font-serif fw-bold text-dark mb-1">
+                <a href="{% url 'blogs:blog_detail' slug=blog.slug %}" class="text-dark text-decoration-none hover-text-orange">
+                  {{ blog.title }}
+                </a>
+              </h2>
+
+              <!-- Description -->
+              <p class="text-secondary small font-sans mb-3 line-clamp-2" style="font-size: 0.88rem; line-height: 1.55;">
+                {{ blog.description }}
+              </p>
+
+              <!-- Footer Actions Row -->
+              <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 pt-2 border-top mt-auto">
+                <div class="text-muted small" style="font-size: 0.75rem;">
+                  <span><i class="bi bi-clock me-1"></i> {{ blog.reading_time }} min read</span>
+                  <span class="mx-2">&bull;</span>
+                  <span><i class="bi bi-eye me-1"></i> {{ blog.views_count }} views</span>
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+                  <!-- View Action -->
+                  <a href="{% url 'blogs:blog_detail' slug=blog.slug %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 d-inline-flex align-items-center gap-1" title="View story">
+                    <i class="bi bi-eye"></i>
+                    <span>View</span>
                   </a>
-                  <button type="button" class="btn btn-sm btn-light text-danger rounded-circle p-2" data-bs-toggle="modal" data-bs-target="#deleteModal{{ blog.id }}" title="Delete story" style="width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center;">
+
+                  <!-- Edit Action -->
+                  <a href="{% url 'blogs:edit_blog' slug=blog.slug %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 d-inline-flex align-items-center gap-1" title="Edit story">
+                    <i class="bi bi-pencil"></i>
+                    <span>Edit</span>
+                  </a>
+
+                  <!-- Delete Action Modal Trigger -->
+                  <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3 py-1 d-inline-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#deleteModal{{ blog.id }}" title="Delete story">
                     <i class="bi bi-trash"></i>
+                    <span>Delete</span>
                   </button>
                 </div>
-              </td>
-            </tr>
-          {% empty %}
-            <tr>
-              <td colSpan="6" class="text-center py-5">
-                <i class="bi bi-journal-plus fs-1 text-muted"></i>
-                <h5 class="h6 text-dark mt-3">No stories in this view</h5>
-                <p class="text-secondary small mb-3">You haven't created any posts under "{{ status_filter }}" yet.</p>
-                <a href="{% url 'blogs:create_blog' %}" class="btn btn-sm btn-orange-primary rounded-pill px-3" style="background-color: #C65D24; border-color: #C65D24;">Write a Story</a>
-              </td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </div>
+              </div>
 
-  <!-- ================= MOBILE RESPONSIVE CARDS VIEW (Optimized for small screens) ================= -->
-  <div id="mobileCardsContainer" class="d-md-none mb-5">
-    <div class="d-flex flex-column gap-3">
-      {% for blog in blogs %}
-        <div class="card border rounded-4 shadow-sm bg-white p-3 p-sm-4">
-          <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
-            <div class="d-flex align-items-center gap-2">
-              <span class="badge rounded-pill bg-light text-secondary font-monospace" style="font-size: 0.72rem;">#{{ forloop.counter }}</span>
-              <span class="badge rounded-pill px-2.5 py-1" style="background-color: #FFEDD5; color: #C65D24; font-size: 0.72rem; border: 1px solid rgba(198, 93, 36, 0.15);">
-                {{ blog.category }}
-              </span>
             </div>
-            {% if blog.status == 'Published' %}
-              <span class="badge rounded-pill px-2.5 py-1 fw-medium" style="background-color: #ECFDF5; color: #065F46; font-size: 0.72rem; border: 1px solid rgba(5, 150, 105, 0.2);">
-                Published
-              </span>
-            {% else %}
-              <span class="badge rounded-pill px-2.5 py-1 fw-medium" style="background-color: #FFEDD5; color: #C65D24; font-size: 0.72rem; border: 1px solid rgba(198, 93, 36, 0.2);">
-                Draft
-              </span>
-            {% endif %}
-          </div>
 
-          <h2 class="h6 font-serif fw-bold text-dark mb-1 leading-snug">
-            <a href="{% url 'blogs:blog_detail' slug=blog.slug %}" class="text-dark text-decoration-none hover-text-orange">
-              {{ blog.title }}
-            </a>
-          </h2>
-          <p class="text-secondary small mb-3 line-clamp-2" style="font-size: 0.82rem;">
-            {{ blog.description }}
-          </p>
-
-          <div class="d-flex justify-content-between align-items-center pt-2 border-top mt-auto">
-            <span class="text-muted" style="font-size: 0.75rem;">
-              <i class="bi bi-calendar3 me-1"></i> {{ blog.created_at|date:"M d, Y" }}
-            </span>
-            <div class="d-flex align-items-center gap-2">
-              <a href="{% url 'blogs:edit_blog' slug=blog.slug %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1" style="font-size: 0.78rem;">
-                <i class="bi bi-pencil me-1"></i> Edit
-              </a>
-              <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-2.5 py-1" data-bs-toggle="modal" data-bs-target="#deleteModal{{ blog.id }}" style="font-size: 0.78rem;">
-                <i class="bi bi-trash"></i>
-              </button>
-            </div>
           </div>
         </div>
-      {% empty %}
-        <div class="card border rounded-4 shadow-sm bg-white p-5 text-center">
-          <i class="bi bi-journal-plus fs-1 text-muted"></i>
-          <h5 class="h6 text-dark mt-3">No stories in this view</h5>
-          <p class="text-secondary small mb-3">You haven't created any posts under "{{ status_filter }}" yet.</p>
-          <a href="{% url 'blogs:create_blog' %}" class="btn btn-sm btn-orange-primary rounded-pill px-3" style="background-color: #C65D24; border-color: #C65D24;">Write a Story</a>
+      </div>
+    {% empty %}
+      <div class="card border rounded-4 shadow-sm bg-white p-5 text-center">
+        <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 mx-auto" style="width: 64px; height: 64px; background-color: #FFEDD5; color: #C65D24;">
+          <i class="bi bi-journal-plus fs-2"></i>
         </div>
-      {% endfor %}
-    </div>
+        <h5 class="h6 font-serif fw-bold text-dark mt-2 mb-1">No stories in this view</h5>
+        <p class="text-secondary small mb-3">You don't have any stories under "{{ status_filter|title }}".</p>
+        <div>
+          <a href="{% url 'blogs:create_blog' %}" class="btn btn-orange-primary rounded-pill px-4 py-2 fw-medium shadow-sm" style="background-color: #C65D24; border-color: #C65D24;">
+            <i class="bi bi-plus-lg me-1"></i> Write a New Story
+          </a>
+        </div>
+      </div>
+    {% endfor %}
   </div>
 
-  <!-- Delete Confirmation Modals for all posts -->
+  <!-- Delete Confirmation Modals -->
   {% for blog in blogs %}
     <div class="modal fade text-start" id="deleteModal{{ blog.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ blog.id }}" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
@@ -189,32 +167,4 @@
   {% endfor %}
 
 </div>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-  // Mobile View Switcher (Cards vs Table)
-  const cardViewBtn = document.getElementById('mobileCardViewBtn');
-  const tableViewBtn = document.getElementById('mobileTableViewBtn');
-  const cardsContainer = document.getElementById('mobileCardsContainer');
-  const tableContainer = document.getElementById('desktopTableViewContainer');
-
-  if (cardViewBtn && tableViewBtn && cardsContainer && tableContainer) {
-    cardViewBtn.addEventListener('click', () => {
-      cardViewBtn.classList.add('active');
-      tableViewBtn.classList.remove('active');
-      cardsContainer.classList.remove('d-none');
-      tableContainer.classList.add('d-none');
-      tableContainer.classList.remove('d-block');
-    });
-
-    tableViewBtn.addEventListener('click', () => {
-      tableViewBtn.classList.add('active');
-      cardViewBtn.classList.remove('active');
-      cardsContainer.classList.add('d-none');
-      tableContainer.classList.remove('d-none');
-      tableContainer.classList.add('d-block');
-    });
-  }
-</script>
 {% endblock %}

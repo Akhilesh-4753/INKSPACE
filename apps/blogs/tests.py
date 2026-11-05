@@ -126,3 +126,66 @@ class BlogTests(TestCase):
         form = BlogForm(data=data)
         self.assertFalse(form.is_valid())
         self.assertIn('content', form.errors)
+
+    def test_blog_without_cover_image_returns_none_url(self):
+        """A blog without a cover image should return None instead of an automatic default."""
+        blog_no_cover = Blog.objects.create(
+            author=self.user,
+            title='No Cover Story',
+            description='This story has no cover image.',
+            category=CategoryChoices.TECHNOLOGY,
+            content='This is a story created without uploading an image.',
+            status=BlogStatus.PUBLISHED
+        )
+        self.assertIsNone(blog_no_cover.get_cover_image_url)
+        self.assertFalse(blog_no_cover.has_cover_image)
+
+    def test_create_blog_without_cover_image_succeeds(self):
+        """Users must be able to create a blog without uploading a cover image."""
+        self.client.login(username='author1', password='Password123!')
+        response = self.client.post(reverse('blogs:create_blog'), {
+            'title': 'Blog Created Without Cover',
+            'description': 'Valid description with more than 15 characters.',
+            'category': 'Education',
+            'content': '<p>This is complete blog content without an uploaded cover image.</p>',
+            'status': 'Published',
+            'action': 'publish'
+        })
+        self.assertEqual(response.status_code, 302)
+        new_blog = Blog.objects.get(title='Blog Created Without Cover')
+        self.assertFalse(bool(new_blog.cover_image))
+        self.assertIsNone(new_blog.get_cover_image_url)
+
+    def test_my_blogs_vertical_card_view(self):
+        """My Blogs page renders vertical card list with View, Edit, and Delete actions."""
+        self.client.login(username='author1', password='Password123!')
+        response = self.client.get(reverse('blogs:my_blogs'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'A Weekend in the Western Ghats')
+        self.assertContains(response, 'View')
+        self.assertContains(response, 'Edit')
+        self.assertContains(response, 'Delete')
+        self.assertContains(response, 'myBlogsCardList')
+        self.assertContains(response, 'All')
+        self.assertContains(response, 'Published')
+        self.assertContains(response, 'Drafts')
+
+    def test_edit_blog_remove_cover_image(self):
+        """Authors can remove an existing cover image during edit."""
+        self.client.login(username='author1', password='Password123!')
+        self.blog.cover_image = 'blog_covers/test_cover.jpg'
+        self.blog.save()
+
+        response = self.client.post(reverse('blogs:edit_blog', kwargs={'slug': self.blog.slug}), {
+            'title': self.blog.title,
+            'description': self.blog.description,
+            'category': self.blog.category,
+            'content': '<p>Updated content with enough length to pass validation.</p>',
+            'status': self.blog.status,
+            'remove_cover_image': '1',
+            'action': 'publish'
+        })
+        self.assertEqual(response.status_code, 302)
+        self.blog.refresh_from_db()
+        self.assertFalse(bool(self.blog.cover_image))
+        self.assertIsNone(self.blog.get_cover_image_url)

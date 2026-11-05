@@ -184,6 +184,16 @@ def edit_blog(request, slug):
         form = BlogForm(request.POST, request.FILES, instance=blog)
         if form.is_valid():
             updated_blog = form.save(commit=False)
+
+            # Check if author requested to remove existing cover image without uploading a new one
+            if request.POST.get('remove_cover_image') == '1' and not request.FILES.get('cover_image'):
+                if updated_blog.cover_image:
+                    try:
+                        updated_blog.cover_image.delete(save=False)
+                    except Exception:
+                        pass
+                updated_blog.cover_image = None
+
             action = request.POST.get('action')
             if action == 'publish':
                 updated_blog.status = BlogStatus.PUBLISHED

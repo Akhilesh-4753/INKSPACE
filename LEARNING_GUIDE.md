@@ -212,6 +212,27 @@ def reading_time(self):
 ```
 Average adult reading speed is approximately 200 words per minute. Using `@property`, templates can simply invoke `{{ blog.reading_time }}` as if it were a model field!
 
+#### Handling Optional Cover Images (`get_cover_image_url`)
+```python
+@property
+def get_cover_image_url(self):
+    if not self.cover_image:
+        return None
+    val = str(self.cover_image).strip()
+    if not val:
+        return None
+    if val.startswith("http://") or val.startswith("https://"):
+        return val
+    try:
+        return self.cover_image.url
+    except Exception:
+        return None
+```
+**Why return `None` instead of a hardcoded default image?**
+1. **Author Intent**: Some authors prefer pure editorial text stories without imagery. Hardcoding fallback image URLs prevents templates from distinguishing between an author who explicitly uploaded an image and one who did not.
+2. **Template Flexibility**: Templates use `{% if blog.get_cover_image_url %}` to conditionally display the hero image on the reading page or an elegant stylized placeholder badge on cards, preventing broken `<img>` tags without imposing unwanted imagery.
+3. **Form Upload Lifecycle**: In `create_blog.html`, the file input is optional and empty by default. In `edit_blog.html`, existing images are preserved automatically by Django's `ModelForm`, and authors can selectively remove an image via a dedicated remove checkbox without deleting the post.
+
 ### The `Follow` Model (`apps/accounts/models.py`)
 To enable readers to follow authors while strictly preventing self-following and duplicates at the database level:
 

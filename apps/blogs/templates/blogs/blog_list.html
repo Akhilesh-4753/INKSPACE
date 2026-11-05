@@ -52,20 +52,28 @@
   <section class="featured-section mb-5">
     <div class="card border rounded-4 shadow-sm overflow-hidden bg-white">
       <div class="row g-0 align-items-stretch">
-        <div class="col-lg-6">
-          <div class="position-relative h-100" style="min-height: 280px;">
-            <img src="{{ featured_blog.get_cover_image_url }}" alt="{{ featured_blog.title }}" class="w-100 h-100 object-fit-cover">
-            <span class="badge position-absolute top-0 start-0 m-3 px-3 py-2 rounded-pill fw-medium shadow-sm" style="background-color: #C65D24 !important; color: #FFFFFF;">
-              <i class="bi bi-star-fill text-warning me-1"></i> Featured
-            </span>
+        {% if featured_blog.get_cover_image_url %}
+          <div class="col-lg-6">
+            <div class="position-relative h-100" style="min-height: 280px;">
+              <img src="{{ featured_blog.get_cover_image_url }}" alt="{{ featured_blog.title }}" class="w-100 h-100 object-fit-cover">
+              <span class="badge position-absolute top-0 start-0 m-3 px-3 py-2 rounded-pill fw-medium shadow-sm" style="background-color: #C65D24 !important; color: #FFFFFF;">
+                <i class="bi bi-star-fill text-warning me-1"></i> Featured
+              </span>
+            </div>
           </div>
-        </div>
-
-        <div class="col-lg-6 p-4 p-md-5 d-flex flex-column justify-content-center">
-          <div class="mb-2">
+          <div class="col-lg-6 p-4 p-md-5 d-flex flex-column justify-content-center">
+        {% else %}
+          <div class="col-12 p-4 p-md-5 d-flex flex-column justify-content-center">
+        {% endif %}
+          <div class="mb-2 d-flex align-items-center gap-2">
             <span class="badge rounded-pill px-3 py-1 fw-semibold text-uppercase" style="background-color: #FFEDD5; color: #C65D24; font-size: 0.75rem; letter-spacing: 0.05em; border: 1px solid rgba(198, 93, 36, 0.15);">
               {{ featured_blog.category }}
             </span>
+            {% if not featured_blog.get_cover_image_url %}
+              <span class="badge rounded-pill px-3 py-1 fw-medium shadow-sm" style="background-color: #C65D24 !important; color: #FFFFFF;">
+                <i class="bi bi-star-fill text-warning me-1"></i> Featured
+              </span>
+            {% endif %}
           </div>
           <h2 class="h2 font-serif fw-bold mb-3">
             <a href="{% url 'blogs:blog_detail' slug=featured_blog.slug %}" class="text-dark text-decoration-none hover-text-orange">
@@ -111,12 +119,20 @@
       {% for story in latest_stories %}
         <div class="col">
           <div class="card h-100 border rounded-4 shadow-sm overflow-hidden bg-white hover-shadow transition-all">
-            <div class="position-relative" style="height: 180px;">
-              <img src="{{ story.get_cover_image_url }}" alt="{{ story.title }}" class="w-100 h-100 object-fit-cover">
-              <span class="badge position-absolute top-0 start-0 m-3 px-2 py-1 rounded-pill" style="background-color: #FFEDD5; color: #C65D24; font-size: 0.7rem; border: 1px solid rgba(198, 93, 36, 0.15);">
-                {{ story.category }}
-              </span>
-            </div>
+            {% if story.get_cover_image_url %}
+              <div class="position-relative" style="height: 180px;">
+                <img src="{{ story.get_cover_image_url }}" alt="{{ story.title }}" class="w-100 h-100 object-fit-cover">
+                <span class="badge position-absolute top-0 start-0 m-3 px-2 py-1 rounded-pill" style="background-color: #FFEDD5; color: #C65D24; font-size: 0.7rem; border: 1px solid rgba(198, 93, 36, 0.15);">
+                  {{ story.category }}
+                </span>
+              </div>
+            {% else %}
+              <div class="px-4 pt-4 pb-0">
+                <span class="badge rounded-pill px-2.5 py-1" style="background-color: #FFEDD5; color: #C65D24; font-size: 0.72rem; border: 1px solid rgba(198, 93, 36, 0.15);">
+                  {{ story.category }}
+                </span>
+              </div>
+            {% endif %}
 
             <div class="card-body p-4 d-flex flex-column">
               <h3 class="h5 font-serif fw-bold mb-2">
