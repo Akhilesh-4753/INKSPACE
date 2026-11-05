@@ -12,24 +12,7 @@ gemini_service = GeminiService()
 def generate_blog_api(request):
     """
     POST endpoint: Generates complete title, description, and structured article
-    content from a given topic and category.
-    
-    Expected JSON payload:
-    {
-        "topic": "Benefits of learning Python",
-        "category": "Technology"
-    }
-
-    Returns:
-    {
-        "success": true,
-        "data": {
-            "title": "Why Learning Python Is a Great Investment in Your Future",
-            "description": "Discover why Python is one of the most useful...",
-            "content": "<h3>Introduction</h3>...",
-            "suggested_tags": ["Python", "Coding", "Career"]
-        }
-    }
+    content from a given topic and category for one-click insertion into the editor.
     """
     try:
         data = json.loads(request.body.decode('utf-8'))
@@ -53,7 +36,7 @@ def generate_blog_api(request):
         AIGenerationLog.objects.create(
             user=user,
             prompt_summary=topic[:250],
-            model_used=result.get('model_used', 'gemini-3.8-flash')
+            model_used=result.get('model_used', 'gemini-2.5-flash')
         )
 
         return JsonResponse({'success': True, 'data': result})
@@ -63,31 +46,57 @@ def generate_blog_api(request):
             'error': f"AI generation failed: {str(e)}"
         }, status=500)
 
+
 @require_POST
 def chat_message_api(request):
     """
-    POST endpoint: Conversational AI writing assistant communication.
-    Accepts user prompts, drafting inquiries, or headline generation requests.
+    POST endpoint: Intelligent conversational AI writing assistant communication.
+    Accepts:
+      - message: User input prompt or topic
+      - mode: Selected writing mode ('general', 'full_blog', 'titles', 'description', 'ideas', 'improve')
+      - history: List of recent conversation turns [{'role': 'user'|'assistant', 'content': '...'}]
+      - context: Current editor draft state {'title': '...', 'content': '...'}
     """
     try:
         data = json.loads(request.body.decode('utf-8'))
     except json.JSONDecodeError:
-        return JsonResponse({'success': False, 'error': 'Invalid JSON in request.'}, status=400)
+        return JsonResponse({'success': False, 'error': 'Invalid JSON format in request.'}, status=400)
 
     message = data.get('message', '').strip()
+    mode = data.get('mode', 'general').strip().lower()
+    history = data.get('history', [])
     context = data.get('context', {})
 
     if not message:
         return JsonResponse({'success': False, 'error': 'Message cannot be empty.'}, status=400)
 
     try:
-        reply = gemini_service.chat_assist(message=message, current_context=context)
-        return JsonResponse({'success': True, 'reply': reply})
+        reply = gemini_service.chat_assist(
+            message=message,
+            mode=mode,
+            history=history,
+            current_context=context
+        )
+
+        # Audit log
+        user = request.user if request.user.is_authenticated else None
+        AIGenerationLog.objects.create(
+            user=user,
+            prompt_summary=f"[{mode}] {message[:200]}",
+            model_used=gemini_service.model_name
+        )
+
+        return JsonResponse({
+            'success': True,
+            'reply': reply,
+            'mode': mode
+        })
     except Exception as e:
         return JsonResponse({
             'success': False,
             'error': f"Assistant error: {str(e)}"
         }, status=500)
+
 
 @ensure_csrf_cookie
 def chatbot_widget_view(request):

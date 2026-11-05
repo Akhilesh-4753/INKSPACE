@@ -254,35 +254,50 @@ erDiagram
 
 ## 6. Gemini AI Writing Assistant Architecture
 
+The AI Writing Assistant operates as an intelligent blog-writing mentor powered by the official Google Gen AI Python SDK (`google-genai`).
+
+### AI Writing Modes & Capabilities
+1. **Mentor Mode (Default)**: Automatically unpacks simple topics (e.g., *"Need food topic"* or *"Benefits of learning Python"*) into 5 engaging titles, a short preview description (< 200 chars), a structured content outline, target audience insight, and an actionable prompt to develop into a full blog.
+2. **Full Blog Mode (`full_blog`)**: Generates publishing-ready articles (500–800 words) with title, description, structured subheadings, and conclusion.
+3. **Catchy Titles Mode (`titles`)**: Generates 5–7 compelling, high-converting blog titles with 1-line strategic rationales.
+4. **Description Mode (`description`)**: Generates 2–3 concise, attractive short preview descriptions optimized for cards, social feeds, and SEO.
+5. **Content Ideas Mode (`ideas`)**: Recommends a structured content roadmap, key headings/subheadings, discussion points, and target audience insights.
+6. **Improve Writing Mode (`improve`)**: Rewrites and polishes user-supplied text with cleaner flow and active vocabulary, providing a bulleted breakdown of key improvements.
+
+### Multi-turn Conversation & Editor Integration
+- **Context Flow**: Maintains active conversation history across turns, allowing users to pick a suggested title (e.g., *"Let's write #2"*) and subsequently command *"Generate the full blog"* with full context memory.
+- **Auto-Growing Input**: Textarea automatically resizes up to 120px without visible default vertical scrollbars (`Enter` sends, `Shift + Enter` inserts newlines).
+- **Editor Insertion**: Generated titles, descriptions, and full content feature 1-click action buttons to populate `#id_title`, `#id_description`, and `#id_content` in the INKSPACE blog editor (or copy cleanly to clipboard on reading pages).
+
 ```mermaid
 sequenceDiagram
     autonumber
     actor Writer as Author
     participant Browser as Browser (chatbot.js)
-    participant Django as Django (/chatbot/generate-blog/)
+    participant Django as Django (/chatbot/chat/)
     participant Service as GeminiService (services.py)
     participant Gemini as Google Gemini API (gemini-3.8-flash)
     participant Editor as Blog Form (create_blog.html)
 
-    Writer->>Browser: Enters Topic ("Benefits of Python")
-    Browser->>Django: POST /chatbot/generate-blog/ (JSON payload + CSRF)
-    Django->>Django: Validate prompt length & category
-    Django->>Service: generate_blog_package(topic, category)
-    Service->>Gemini: client.models.generate_content(prompt, JSON schema)
-    Gemini-->>Service: Structured JSON {title, description, content, tags}
-    Service-->>Django: Validated dictionary
-    Django->>Django: Create AIGenerationLog record
-    Django-->>Browser: JSON {success: true, data: {...}}
-    Browser-->>Writer: Displays formatted preview card
-    Writer->>Editor: Clicks "Use in Editor"
-    Editor->>Editor: Populates Title, Description, and Content fields
+    Writer->>Browser: Enters Topic or Selects Mode (e.g. "Food in Kerala")
+    Browser->>Django: POST /chatbot/chat/ (message, mode, history, draft context)
+    Django->>Django: Validate input & log audit record
+    Django->>Service: chat_assist(message, mode, history, current_context)
+    Service->>Gemini: client.models.generate_content(contents, system_instruction)
+    Gemini-->>Service: Formatted Markdown response with titles & outline
+    Service-->>Django: Validated response string
+    Django-->>Browser: JSON {success: true, reply: "...", mode: "..."}
+    Browser-->>Writer: Renders safe Markdown & interactive action chips
+    Writer->>Browser: Clicks "Use Title" or "Use All in Editor"
+    Browser->>Editor: Populates Title, Description, and Content fields
     Writer->>Editor: Reviews, adjusts, and clicks "Publish Blog"
 ```
 
 ### Security & API Protection
 - **No Client Secrets Exposed**: The API key (`GEMINI_API_KEY`) is kept strictly server-side in Django environment variables (`.env`).
-- **CSRF Protection**: All POST requests to `/chatbot/generate-blog/` require valid Django CSRF tokens.
+- **CSRF Protection**: All POST requests to `/chatbot/chat/` and `/chatbot/generate-blog/` require valid Django CSRF tokens.
 - **Prompt Throttling & Validation**: Enforces maximum length (300 chars) and sanitizes input to prevent prompt injection or runaway token consumption.
+- **Safe Markdown Rendering**: Escapes raw HTML entities before converting markdown to DOM elements, preventing script injection.
 - **Human-in-the-Loop**: Generated content is never auto-published; authors must explicitly review, edit, and save.
 
 ---

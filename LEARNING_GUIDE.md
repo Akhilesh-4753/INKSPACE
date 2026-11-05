@@ -366,56 +366,48 @@ INKSPACE uses a master template pattern:
 ## 8. Google Gemini AI Integration Deep Dive
 
 ### Why `apps/chatbot/services.py`?
-Separation of concerns is fundamental to clean architecture. Views should handle web requests, and models should manage data. All external API networking and SDK initialization lives in a dedicated service class: `GeminiService`.
+Separation of concerns is fundamental to clean architecture. Views should handle web requests, and models should manage data. All external API networking, SDK initialization, and prompt engineering lives in a dedicated service layer: `GeminiService`.
 
-### Using the Official Google Gen AI SDK
+### The AI Writing Mentor & 5 Dedicated Modes
+The assistant operates as a professional writing mentor with 5 dedicated writing modes:
+1. **Mentor Mode (Default)**: Automatically unpacks simple topics (e.g., *"Need food topic"*) into 5 engaging titles, a short preview description, a structured content outline, target audience insight, and a prompt to develop into a full blog.
+2. **Full Blog Mode (`full_blog`)**: Generates publishing-ready articles with title, description, and structured sections.
+3. **Catchy Titles Mode (`titles`)**: Generates 5–7 compelling, high-converting blog titles with 1-line strategic rationales.
+4. **Description Mode (`description`)**: Generates 2–3 concise, attractive short preview descriptions (< 200 chars).
+5. **Content Ideas Mode (`ideas`)**: Recommends a structured content roadmap, key headings/subheadings, and target audience insights.
+6. **Improve Writing Mode (`improve`)**: Rewrites and elevates user-supplied text with cleaner flow and active vocabulary, providing a bulleted breakdown of key improvements.
+
+### Multi-turn Conversation Memory & Context Flow
+In `GeminiService.chat_assist`, the conversation history is formatted into `google.genai.types.Content` objects:
 ```python
-from google import genai
-
-class GeminiService:
-    def __init__(self):
-        self.api_key = settings.GEMINI_API_KEY
-        self.model_name = settings.GEMINI_MODEL  # 'gemini-3.8-flash'
-        self._client = None
-
-    def _get_client(self):
-        if not self._client:
-            self._client = genai.Client(api_key=self.api_key)
-        return self._client
+contents = []
+for turn in history[-8:]:
+    role = "user" if turn.get('role') == 'user' else "model"
+    contents.append(types.Content(
+        role=role,
+        parts=[types.Part.from_text(text=turn.get('content'))]
+    ))
+contents.append(types.Content(
+    role="user",
+    parts=[types.Part.from_text(text=current_user_message)]
+))
 ```
+This enables conversational context flow: an author can say *"Travel in Kerala"*, receive 5 title options, reply *"I like title #2"*, and then command *"Generate the full blog"*—and Gemini understands the entire context thread!
 
-### Generating Structured Blog Packages
-To ensure the AI returns clean, parseable data rather than unformatted prose, we pass `response_mime_type: 'application/json'` in the generation config:
-```python
-response = client.models.generate_content(
-    model=self.model_name,
-    contents=prompt,
-    config={
-        'system_instruction': "You are an editorial writing assistant for INKSPACE...",
-        'response_mime_type': 'application/json',
-        'temperature': 0.7,
-    }
-)
-```
-
-The response is parsed and passed to the frontend as:
-```json
-{
-  "title": "Why Learning Python Is a Great Investment in Your Future",
-  "description": "Discover why Python is one of the most useful programming languages for beginners...",
-  "content": "<h3>Introduction</h3><p>Python has established itself...</p>",
-  "suggested_tags": ["Python", "Programming", "Career"]
-}
-```
+### Input Box & Scrollbar Fix
+To prevent unwanted vertical scrollbars and handle multiline input smoothly:
+- **CSS**: The textarea is constrained with `min-height: 42px; max-height: 120px; overflow-y: hidden; resize: none;`.
+- **JavaScript**: Dynamically recalculates `scrollHeight` on the `input` event, expanding smoothly up to 120px, and enables `.has-scroll` with a custom thin scrollbar only when maximum height is exceeded.
+- **Keyboard Navigation**: Pressing `Enter` submits the form, while `Shift + Enter` inserts a newline.
 
 ### Inserting Content into the Blog Editor
-In `chatbot.js`, when the user clicks **"Use Generated Content"**:
+In `chatbot.js`, generated titles, descriptions, and full articles feature one-click action buttons:
 ```javascript
-document.getElementById('id_title').value = data.title;
-document.getElementById('id_description').value = data.description;
-document.getElementById('id_content').value = data.content;
+document.getElementById('id_title').value = parsedData.title;
+document.getElementById('id_description').value = parsedData.description;
+document.getElementById('id_content').value = parsedData.content;
 ```
-The values seamlessly populate the Django form fields! The user can now edit, refine, upload a cover image, and choose to save as draft or publish.
+If the author is on any other page, the content is copied to the clipboard with a prompt directing them to the blog creation page. Content is never automatically saved or published without the author's explicit review.
 
 ---
 
