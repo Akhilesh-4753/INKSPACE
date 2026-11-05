@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{{ blog.title }} – INKSPACE{% endblock %}
+{% block title %}INKSPACE – {{ blog.title }}{% endblock %}
 {% block meta_description %}{{ blog.description }}{% endblock %}
 
 {% block content %}
@@ -9,7 +9,7 @@
 
   <!-- Breadcrumbs & Back Navigation -->
   <div class="mb-3">
-    <a href="{% url 'blogs:blog_list' %}" class="text-decoration-none text-muted small d-inline-flex align-items-center gap-1 hover-text-dark">
+    <a href="{% url 'blogs:blog_list' %}" class="text-decoration-none text-muted small d-inline-flex align-items-center gap-1 hover-text-orange">
       <i class="bi bi-arrow-left"></i>
       <span>Back to stories</span>
     </a>
@@ -21,11 +21,11 @@
       
       <!-- Category Badge -->
       <div class="mb-3">
-        <a href="{% url 'blogs:explore' %}?category={{ blog.category }}" class="badge rounded-pill text-decoration-none px-3 py-1 fw-semibold text-uppercase" style="background-color: #eaf3ed; color: #166534; font-size: 0.78rem; letter-spacing: 0.05em;">
+        <a href="{% url 'blogs:explore' %}?category={{ blog.category }}" class="badge rounded-pill text-decoration-none px-3 py-1 fw-semibold text-uppercase" style="background-color: #FFEDD5; color: #C65D24; font-size: 0.78rem; letter-spacing: 0.05em; border: 1px solid rgba(198, 93, 36, 0.15);">
           {{ blog.category }}
         </a>
         {% if blog.status == 'Draft' %}
-          <span class="badge bg-warning text-dark rounded-pill px-3 py-1 ms-2">Draft (Private)</span>
+          <span class="badge rounded-pill px-3 py-1 ms-2" style="background-color: #FEF3C7; color: #92400E; border: 1px solid rgba(217, 119, 6, 0.2);">Draft (Private)</span>
         {% endif %}
       </div>
 
@@ -45,7 +45,7 @@
           {% if blog.author.profile.get_avatar_url %}
             <img src="{{ blog.author.profile.get_avatar_url }}" alt="{{ blog.author.username }}" class="rounded-circle object-fit-cover border" width="44" height="44">
           {% else %}
-            <div class="rounded-circle text-success fw-bold d-flex align-items-center justify-content-center border fs-5" style="width: 44px; height: 44px; background-color: #eaf3ed; color: #166534;">
+            <div class="rounded-circle fw-bold d-flex align-items-center justify-content-center border fs-5" style="width: 44px; height: 44px; background-color: #FFEDD5; color: #C65D24;">
               {{ blog.author.first_name|default:blog.author.username|slice:":1"|upper }}
             </div>
           {% endif %}
@@ -73,7 +73,7 @@
       </div>
 
       <!-- Hero Cover Image -->
-      <div class="rounded-4 overflow-hidden mb-5 shadow-sm">
+      <div class="rounded-4 overflow-hidden mb-5 shadow-sm border">
         <img src="{{ blog.get_cover_image_url }}" alt="{{ blog.title }}" class="w-100 object-fit-cover" style="max-height: 480px;">
       </div>
 
@@ -101,14 +101,14 @@
       <div class="position-sticky" style="top: 100px;">
         
         <!-- About the Author Card -->
-        <div class="card border-0 rounded-4 shadow-sm p-4 bg-white mb-4">
+        <div class="card border rounded-4 shadow-sm p-4 bg-white mb-4">
           <h2 class="h6 text-uppercase fw-bold text-muted mb-3" style="letter-spacing: 0.05em; font-size: 0.78rem;">About the Author</h2>
           
           <div class="d-flex align-items-center gap-3 mb-3">
             {% if blog.author.profile.get_avatar_url %}
               <img src="{{ blog.author.profile.get_avatar_url }}" alt="{{ blog.author.username }}" class="rounded-circle object-fit-cover border" width="56" height="56">
             {% else %}
-              <div class="rounded-circle text-success fw-bold d-flex align-items-center justify-content-center border fs-4" style="width: 56px; height: 56px; background-color: #eaf3ed; color: #166534;">
+              <div class="rounded-circle fw-bold d-flex align-items-center justify-content-center border fs-4" style="width: 56px; height: 56px; background-color: #FFEDD5; color: #C65D24;">
                 {{ blog.author.first_name|default:blog.author.username|slice:":1"|upper }}
               </div>
             {% endif %}
@@ -126,7 +126,7 @@
             {% if user.is_authenticated %}
               <form action="{% url 'accounts:toggle_follow' author_id=blog.author.id %}" method="post">
                 {% csrf_token %}
-                <button type="submit" class="btn {% if is_following %}btn-success{% else %}btn-outline-dark{% endif %} btn-sm rounded-pill w-100 fw-medium" style="{% if is_following %}background-color: #166534; border-color: #166534;{% endif %}">
+                <button type="submit" class="btn {% if is_following %}btn-orange-secondary{% else %}btn-orange-outline{% endif %} btn-sm rounded-pill w-100 fw-medium" style="{% if is_following %}background-color: #FFEDD5; color: #C65D24; border: 1px solid #FDBA74;{% else %}color: #C65D24; border-color: #C65D24;{% endif %}">
                   {% if is_following %}
                     <i class="bi bi-check2 me-1"></i> Following
                   {% else %}
@@ -135,7 +135,7 @@
                 </button>
               </form>
             {% else %}
-              <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-outline-dark btn-sm rounded-pill w-100 fw-medium">
+              <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-orange-outline btn-sm rounded-pill w-100 fw-medium" style="color: #C65D24; border-color: #C65D24;">
                 <i class="bi bi-plus-lg me-1"></i> Follow
               </a>
             {% endif %}
@@ -144,16 +144,16 @@
 
         <!-- More from this Author -->
         {% if more_from_author %}
-        <div class="card border-0 rounded-4 shadow-sm p-4 bg-white">
+        <div class="card border rounded-4 shadow-sm p-4 bg-white">
           <h2 class="h6 text-uppercase fw-bold text-muted mb-3" style="letter-spacing: 0.05em; font-size: 0.78rem;">More from {{ blog.author.first_name|default:blog.author.username }}</h2>
           <div class="d-flex flex-column gap-3">
             {% for other_blog in more_from_author %}
               <a href="{% url 'blogs:blog_detail' slug=other_blog.slug %}" class="text-decoration-none text-dark d-flex gap-3 align-items-center group">
-                <div class="rounded-3 overflow-hidden flex-shrink-0" style="width: 68px; height: 54px; background: #eee;">
+                <div class="rounded-3 overflow-hidden flex-shrink-0 border" style="width: 68px; height: 54px; background: #FFEDD5;">
                   <img src="{{ other_blog.get_cover_image_url }}" alt="{{ other_blog.title }}" class="w-100 h-100 object-fit-cover">
                 </div>
                 <div>
-                  <h3 class="fw-semibold small font-serif mb-1 line-clamp-2 hover-text-success">{{ other_blog.title }}</h3>
+                  <h3 class="fw-semibold small font-serif mb-1 line-clamp-2 hover-text-orange">{{ other_blog.title }}</h3>
                   <div class="text-muted" style="font-size: 0.72rem;">{{ other_blog.created_at|date:"M d, Y" }}</div>
                 </div>
               </a>

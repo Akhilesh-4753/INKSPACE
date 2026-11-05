@@ -1,47 +1,182 @@
 /* ======================================================
-   INKSPACE – Brand Design System & Editorial Styles
+   INKSPACE – Warm Editorial Brand Design System
    Color Palette:
-   - Primary: #166534 (Emerald Green)
-   - Accent: #22C55E (Vibrant Green)
-   - Page Background: #FAFAF7 (Warm Editorial Paper)
-   - Cards & Surfaces: #FFFFFF
-   - Main Text: #18181B (Zinc 900)
-   - Secondary Text: #71717A (Zinc 500)
-   - Borders: #E4E4E7 (Zinc 200)
+   - Primary Orange:          #C65D24
+   - Secondary Orange:        #E87932
+   - Accent Orange:           #F59E0B
+   - Light Cream Background:  #FFF7ED
+   - White Cards:             #FFFFFF
+   - Primary Text:            #292524
+   - Secondary Text:          #78716C
+   - Border Color:            #E7E5E4
+   - Light Orange Background: #FFEDD5
+   - Hover Orange:            #9A3412
    ====================================================== */
 
 :root {
-  --ink-primary: #166534;
-  --ink-primary-dark: #14532d;
-  --ink-accent: #22C55E;
-  --ink-bg: #FAFAF7;
+  --ink-primary: #C65D24;
+  --ink-secondary: #E87932;
+  --ink-accent: #F59E0B;
+  --ink-bg: #FFF7ED;
   --ink-card: #FFFFFF;
-  --ink-text: #18181B;
-  --ink-text-muted: #71717A;
-  --ink-border: #E4E4E7;
+  --ink-text: #292524;
+  --ink-text-muted: #78716C;
+  --ink-border: #E7E5E4;
+  --ink-bg-light: #FFEDD5;
+  --ink-hover: #9A3412;
+
+  /* Font Families */
+  --font-serif: 'Lora', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
 }
 
+/* Global Reset & Body */
 body.bg-page {
   background-color: var(--ink-bg) !important;
   color: var(--ink-text);
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-sans);
   letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Typography Helpers */
 .font-serif {
-  font-family: 'Lora', Georgia, serif !important;
+  font-family: var(--font-serif) !important;
 }
 
 .font-sans {
-  font-family: 'Plus Jakarta Sans', system-ui, sans-serif !important;
+  font-family: var(--font-sans) !important;
 }
 
 .font-mono {
-  font-family: 'JetBrains Mono', monospace !important;
+  font-family: var(--font-mono) !important;
 }
 
-/* Hover effects */
+/* Color Utility Classes */
+.text-ink-primary {
+  color: var(--ink-primary) !important;
+}
+
+.text-ink-secondary {
+  color: var(--ink-secondary) !important;
+}
+
+.text-ink-muted {
+  color: var(--ink-text-muted) !important;
+}
+
+.bg-ink-primary {
+  background-color: var(--ink-primary) !important;
+}
+
+.bg-ink-light {
+  background-color: var(--ink-bg-light) !important;
+}
+
+.bg-ink-page {
+  background-color: var(--ink-bg) !important;
+}
+
+.border-ink {
+  border-color: var(--ink-border) !important;
+}
+
+/* ================= Buttons ================= */
+/* Primary Orange Button */
+.btn-ink-primary,
+.btn-orange-primary {
+  background-color: var(--ink-primary) !important;
+  border-color: var(--ink-primary) !important;
+  color: #FFFFFF !important;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-ink-primary:hover,
+.btn-ink-primary:focus,
+.btn-orange-primary:hover,
+.btn-orange-primary:focus {
+  background-color: var(--ink-hover) !important;
+  border-color: var(--ink-hover) !important;
+  color: #FFFFFF !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(198, 93, 36, 0.25);
+}
+
+/* Secondary Button (Light Orange with Dark Orange Text) */
+.btn-ink-secondary,
+.btn-orange-secondary {
+  background-color: var(--ink-bg-light) !important;
+  border-color: var(--ink-bg-light) !important;
+  color: var(--ink-primary) !important;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-ink-secondary:hover,
+.btn-ink-secondary:focus,
+.btn-orange-secondary:hover,
+.btn-orange-secondary:focus {
+  background-color: #FED7AA !important;
+  border-color: #FED7AA !important;
+  color: var(--ink-hover) !important;
+  transform: translateY(-1px);
+}
+
+/* Outline Orange Button */
+.btn-ink-outline,
+.btn-orange-outline {
+  background-color: transparent !important;
+  border-color: var(--ink-primary) !important;
+  color: var(--ink-primary) !important;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-ink-outline:hover,
+.btn-ink-outline:focus,
+.btn-orange-outline:hover,
+.btn-orange-outline:focus {
+  background-color: var(--ink-primary) !important;
+  border-color: var(--ink-primary) !important;
+  color: #FFFFFF !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(198, 93, 36, 0.2);
+}
+
+/* ================= Badges ================= */
+.badge-category {
+  background-color: var(--ink-bg-light) !important;
+  color: var(--ink-primary) !important;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border: 1px solid rgba(198, 93, 36, 0.15);
+}
+
+.badge-draft {
+  background-color: #FEF3C7 !important;
+  color: #92400E !important;
+  font-weight: 500;
+  border: 1px solid rgba(217, 119, 6, 0.2);
+}
+
+.badge-published {
+  background-color: #ECFDF5 !important;
+  color: #065F46 !important;
+  font-weight: 500;
+  border: 1px solid rgba(5, 150, 105, 0.2);
+}
+
+.badge-featured {
+  background-color: var(--ink-primary) !important;
+  color: #FFFFFF !important;
+}
+
+/* ================= Hover Effects ================= */
+.hover-text-orange:hover,
+.hover-text-primary:hover,
 .hover-text-success:hover {
   color: var(--ink-primary) !important;
   transition: color 0.15s ease-in-out;
@@ -61,54 +196,86 @@ body.bg-page {
 
 .hover-shadow:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 12px 24px -8px rgba(41, 37, 36, 0.08) !important;
 }
 
-/* Article Reader Typography */
+/* ================= Form Controls ================= */
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--ink-primary) !important;
+  box-shadow: 0 0 0 0.2rem rgba(198, 93, 36, 0.2) !important;
+}
+
+.form-check-input:checked {
+  background-color: var(--ink-primary) !important;
+  border-color: var(--ink-primary) !important;
+}
+
+.form-check-input:focus {
+  border-color: var(--ink-primary) !important;
+  box-shadow: 0 0 0 0.2rem rgba(198, 93, 36, 0.2) !important;
+}
+
+/* ================= Article Reader Typography ================= */
 .article-content p {
   margin-bottom: 1.6rem;
   font-size: 1.15rem;
-  line-height: 1.8;
-  color: #27272a;
+  line-height: 1.85;
+  color: var(--ink-text);
 }
 
 .article-content h2, 
 .article-content h3 {
-  font-family: 'Lora', Georgia, serif;
+  font-family: var(--font-serif);
   font-weight: 700;
-  color: #18181b;
+  color: var(--ink-text);
   margin-top: 2.5rem;
   margin-bottom: 1rem;
 }
 
 .article-content blockquote {
   border-left: 4px solid var(--ink-primary);
-  padding: 0.8rem 1.5rem;
+  padding: 1rem 1.5rem;
   margin: 2rem 0;
   font-style: italic;
-  color: #3f3f46;
-  background-color: #f4f8f5;
+  color: #44403C;
+  background-color: var(--ink-bg-light);
   border-radius: 0 8px 8px 0;
 }
 
-/* Upload dropzone */
+/* ================= Upload Dropzone ================= */
 .upload-dropzone {
   transition: border-color 0.2s ease, background-color 0.2s ease;
+  border-color: var(--ink-border) !important;
 }
 
 .upload-dropzone:hover {
   border-color: var(--ink-primary) !important;
-  background-color: #f0f7f2 !important;
+  background-color: var(--ink-bg-light) !important;
 }
 
 .cursor-pointer {
   cursor: pointer;
 }
 
-/* Line clamps */
+/* ================= Line Clamps ================= */
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ================= Alerts Overrides ================= */
+.alert-success {
+  background-color: var(--ink-bg-light) !important;
+  border-color: #FDBA74 !important;
+  color: var(--ink-hover) !important;
 }

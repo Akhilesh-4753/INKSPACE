@@ -7,13 +7,13 @@
 <div class="container py-5">
   <div class="row justify-content-center">
     <div class="col-lg-8">
-      <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+      <div class="card border rounded-4 shadow-sm p-4 p-md-5 bg-white">
         <div class="d-flex align-items-center gap-4 mb-4 pb-4 border-bottom">
           <div class="position-relative">
             {% if user.profile.get_avatar_url %}
               <img src="{{ user.profile.get_avatar_url }}" alt="{{ user.username }}" class="rounded-circle object-fit-cover border" width="80" height="80">
             {% else %}
-              <div class="rounded-circle text-success fw-bold d-flex align-items-center justify-content-center border fs-3" style="width: 80px; height: 80px; background-color: #eaf3ed !important; color: #166534 !important;">
+              <div class="rounded-circle fw-bold d-flex align-items-center justify-content-center border fs-3" style="width: 80px; height: 80px; background-color: #FFEDD5 !important; color: #C65D24 !important;">
                 {{ user.first_name|default:user.username|slice:":1"|upper }}
               </div>
             {% endif %}
@@ -46,7 +46,7 @@
 
           <div class="d-flex justify-content-end gap-3">
             <a href="{% url 'blogs:my_blogs' %}" class="btn btn-outline-secondary px-4 rounded-pill">Cancel</a>
-            <button type="submit" class="btn btn-success px-4 rounded-pill" style="background-color: #166534; border-color: #166534;">Save Profile</button>
+            <button type="submit" class="btn btn-orange-primary px-4 rounded-pill" style="background-color: #C65D24; border-color: #C65D24;">Save Profile</button>
           </div>
         </form>
       </div>

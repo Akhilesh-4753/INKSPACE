@@ -16,8 +16,8 @@
     </div>
 
     <!-- AI Writing Assistant Trigger Button -->
-    <button type="button" class="btn btn-outline-success d-inline-flex align-items-center gap-2 rounded-pill px-3 py-2 fw-medium shadow-sm" data-bs-toggle="modal" data-bs-target="#aiGeneratorModal" style="color: #166534; border-color: #166534;">
-      <i class="bi bi-stars text-success"></i>
+    <button type="button" class="btn btn-orange-outline d-inline-flex align-items-center gap-2 rounded-pill px-3 py-2 fw-medium shadow-sm" data-bs-toggle="modal" data-bs-target="#aiGeneratorModal" style="color: #C65D24; border-color: #C65D24;">
+      <i class="bi bi-stars" style="color: #C65D24;"></i>
       <span>Generate with AI</span>
     </button>
   </div>
@@ -29,7 +29,7 @@
       
       <!-- Main Content Editor Column (Left) -->
       <div class="col-lg-8">
-        <div class="card border-0 rounded-4 shadow-sm p-4 p-md-5 bg-white">
+        <div class="card border rounded-4 shadow-sm p-4 p-md-5 bg-white">
           
           <!-- Title Input -->
           <div class="mb-4">
@@ -105,13 +105,13 @@
       <div class="col-lg-4">
         
         <!-- Cover Image Upload Box -->
-        <div class="card border-0 rounded-4 shadow-sm p-4 bg-white mb-4">
+        <div class="card border rounded-4 shadow-sm p-4 bg-white mb-4">
           <label class="form-label fw-bold text-dark font-serif fs-6 mb-2">Cover Image <span class="text-danger">*</span></label>
           
           <div class="upload-dropzone border border-dashed rounded-3 p-4 text-center bg-light position-relative cursor-pointer" id="coverDropzone">
             <input type="file" name="cover_image" id="id_cover_image" class="position-absolute top-0 start-0 w-100 h-100 opacity-0 cursor-pointer" accept="image/*">
             <div id="dropzonePrompt">
-              <i class="bi bi-image fs-1 text-success mb-2 d-block" style="color: #166534 !important;"></i>
+              <i class="bi bi-image fs-1 mb-2 d-block" style="color: #C65D24 !important;"></i>
               <div class="small fw-semibold text-dark">Click to upload or drag and drop</div>
               <div class="text-muted" style="font-size: 0.72rem;">PNG, JPG (Max 5 MB)</div>
             </div>
@@ -127,10 +127,10 @@
         </div>
 
         <!-- Publish Options -->
-        <div class="card border-0 rounded-4 shadow-sm p-4 bg-white mb-4">
+        <div class="card border rounded-4 shadow-sm p-4 bg-white mb-4">
           <label class="form-label fw-bold text-dark font-serif fs-6 mb-3">Publish Options</label>
 
-          <div class="form-check mb-3 p-3 rounded-3 border bg-light bg-opacity-50">
+          <div class="form-check mb-3 p-3 rounded-3 border" style="background-color: #FFFDF9;">
             <input class="form-check-input" type="radio" name="status" id="statusDraft" value="Draft" {% if form.status.value != 'Published' %}checked{% endif %}>
             <label class="form-check-label ms-2" for="statusDraft">
               <strong class="d-block text-dark">Save as Draft</strong>
@@ -138,7 +138,7 @@
             </label>
           </div>
 
-          <div class="form-check p-3 rounded-3 border bg-light bg-opacity-50">
+          <div class="form-check p-3 rounded-3 border" style="background-color: #FFFDF9;">
             <input class="form-check-input" type="radio" name="status" id="statusPublished" value="Published" {% if form.status.value == 'Published' %}checked{% endif %}>
             <label class="form-check-label ms-2" for="statusPublished">
               <strong class="d-block text-dark">Publish Now</strong>
@@ -152,7 +152,7 @@
           <button type="submit" name="action" value="draft" class="btn btn-outline-secondary flex-grow-1 py-2 rounded-pill fw-medium">
             Save as Draft
           </button>
-          <button type="submit" name="action" value="publish" class="btn btn-success flex-grow-1 py-2 rounded-pill fw-medium shadow-sm" style="background-color: #166534; border-color: #166534;">
+          <button type="submit" name="action" value="publish" class="btn btn-orange-primary flex-grow-1 py-2 rounded-pill fw-medium shadow-sm" style="background-color: #C65D24; border-color: #C65D24;">
             Publish Blog
           </button>
         </div>
@@ -169,7 +169,7 @@
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content rounded-4 border-0 shadow">
       
-      <div class="modal-header border-bottom p-4" style="background: linear-gradient(135deg, #166534 0%, #1e3a29 100%);">
+      <div class="modal-header border-bottom p-4" style="background: linear-gradient(135deg, #C65D24 0%, #9A3412 100%);">
         <div class="d-flex align-items-center gap-2 text-white">
           <i class="bi bi-stars fs-4 text-warning"></i>
           <div>
@@ -180,13 +180,13 @@
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
-      <div class="modal-body p-4 bg-light">
+      <div class="modal-body p-4" style="background-color: #FFFDF9;">
         <!-- Input section -->
-        <div class="card border-0 rounded-3 p-3 bg-white shadow-sm mb-3">
+        <div class="card border rounded-3 p-3 bg-white shadow-sm mb-3">
           <label for="aiTopicInput" class="form-label fw-bold text-dark small mb-1">What would you like to write about?</label>
           <div class="input-group mb-2">
             <input type="text" id="aiTopicInput" class="form-control" placeholder="e.g. Benefits of learning Python for beginners in 2026">
-            <button class="btn btn-success px-4" id="aiGenerateBtn" type="button" style="background-color: #166534; border-color: #166534;">
+            <button class="btn btn-orange-primary px-4" id="aiGenerateBtn" type="button" style="background-color: #C65D24; border-color: #C65D24;">
               <span id="aiBtnText"><i class="bi bi-magic me-1"></i> Generate</span>
               <span id="aiBtnSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
             </button>
@@ -197,12 +197,12 @@
         </div>
 
         <!-- Generated Result Section (Hidden initially) -->
-        <div id="aiResultCard" class="card border-0 rounded-3 p-4 bg-white shadow-sm d-none">
+        <div id="aiResultCard" class="card border rounded-3 p-4 bg-white shadow-sm d-none">
           <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
-            <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded-pill small">
+            <span class="badge rounded-pill px-2 py-1 small" style="background-color: #FFEDD5; color: #C65D24; border: 1px solid #FDBA74;">
               <i class="bi bi-check2-circle me-1"></i> Generated Successfully
             </span>
-            <button type="button" class="btn btn-sm btn-success rounded-pill px-3 fw-medium" id="aiApplyAllBtn" style="background-color: #166534; border-color: #166534;">
+            <button type="button" class="btn btn-sm btn-orange-primary rounded-pill px-3 fw-medium" id="aiApplyAllBtn" style="background-color: #C65D24; border-color: #C65D24;">
               <i class="bi bi-arrow-down-circle me-1"></i> Use Generated Content in Editor
             </button>
           </div>
@@ -211,33 +211,33 @@
           <div class="mb-3">
             <div class="d-flex justify-content-between align-items-center mb-1">
               <span class="text-muted small fw-bold text-uppercase" style="font-size: 0.72rem;">Suggested Title:</span>
-              <button type="button" class="btn btn-link btn-sm text-decoration-none p-0 text-success copy-btn" data-target="generatedTitleText">
+              <button type="button" class="btn btn-link btn-sm text-decoration-none p-0 copy-btn" data-target="generatedTitleText" style="color: #C65D24;">
                 <i class="bi bi-clipboard"></i> Copy
               </button>
             </div>
-            <div class="p-2 rounded bg-light border fw-semibold font-serif" id="generatedTitleText"></div>
+            <div class="p-2 rounded border fw-semibold font-serif" id="generatedTitleText" style="background-color: #FFF7ED;"></div>
           </div>
 
           <!-- Generated Description -->
           <div class="mb-3">
             <div class="d-flex justify-content-between align-items-center mb-1">
               <span class="text-muted small fw-bold text-uppercase" style="font-size: 0.72rem;">Short Description:</span>
-              <button type="button" class="btn btn-link btn-sm text-decoration-none p-0 text-success copy-btn" data-target="generatedDescText">
+              <button type="button" class="btn btn-link btn-sm text-decoration-none p-0 copy-btn" data-target="generatedDescText" style="color: #C65D24;">
                 <i class="bi bi-clipboard"></i> Copy
               </button>
             </div>
-            <div class="p-2 rounded bg-light border small text-secondary" id="generatedDescText"></div>
+            <div class="p-2 rounded border small text-secondary" id="generatedDescText" style="background-color: #FFF7ED;"></div>
           </div>
 
           <!-- Generated Content Preview -->
           <div class="mb-2">
             <div class="d-flex justify-content-between align-items-center mb-1">
               <span class="text-muted small fw-bold text-uppercase" style="font-size: 0.72rem;">Article Content:</span>
-              <button type="button" class="btn btn-link btn-sm text-decoration-none p-0 text-success copy-btn" data-target="generatedContentHtml">
+              <button type="button" class="btn btn-link btn-sm text-decoration-none p-0 copy-btn" data-target="generatedContentHtml" style="color: #C65D24;">
                 <i class="bi bi-clipboard"></i> Copy
               </button>
             </div>
-            <div class="p-3 rounded bg-light border small text-dark overflow-auto" style="max-height: 220px;" id="generatedContentPreview"></div>
+            <div class="p-3 rounded border small text-dark overflow-auto" style="max-height: 220px; background-color: #FFF7ED;" id="generatedContentPreview"></div>
             <!-- Raw HTML stored hidden -->
             <textarea id="generatedContentHtml" class="d-none"></textarea>
           </div>
@@ -247,7 +247,7 @@
         <div id="aiErrorAlert" class="alert alert-danger d-none mt-3" role="alert"></div>
       </div>
 
-      <div class="modal-footer bg-light border-top p-3">
+      <div class="modal-footer border-top p-3" style="background-color: #FFFDF9;">
         <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button>
       </div>
 

@@ -18,18 +18,18 @@
         {% if current_category %}
           <input type="hidden" name="category" value="{{ current_category }}">
         {% endif %}
-        <button class="btn btn-success px-4" type="submit" style="background-color: #166534; border-color: #166534;">Search</button>
+        <button class="btn btn-orange-primary px-4" type="submit" style="background-color: #C65D24; border-color: #C65D24;">Search</button>
       </div>
     </form>
   </div>
 
   <!-- Category Filter Pills -->
   <div class="d-flex flex-wrap justify-content-center gap-2 mb-5">
-    <a href="{% url 'blogs:explore' %}{% if search_query %}?q={{ search_query }}{% endif %}" class="btn btn-sm rounded-pill px-3 py-1 fw-medium {% if not current_category %}btn-success{% else %}btn-outline-secondary border{% endif %}" {% if not current_category %}style="background-color: #166534; border-color: #166534;"{% endif %}>
+    <a href="{% url 'blogs:explore' %}{% if search_query %}?q={{ search_query }}{% endif %}" class="btn btn-sm rounded-pill px-3 py-1 fw-medium {% if not current_category %}btn-orange-primary{% else %}btn-outline-secondary border bg-white{% endif %}" {% if not current_category %}style="background-color: #C65D24; border-color: #C65D24; color: #FFFFFF;"{% endif %}>
       All Categories
     </a>
     {% for cat in categories %}
-      <a href="{% url 'blogs:explore' %}?category={{ cat }}{% if search_query %}&q={{ search_query }}{% endif %}" class="btn btn-sm rounded-pill px-3 py-1 fw-medium {% if current_category == cat %}btn-success{% else %}btn-outline-secondary border{% endif %}" {% if current_category == cat %}style="background-color: #166534; border-color: #166534;"{% endif %}>
+      <a href="{% url 'blogs:explore' %}?category={{ cat }}{% if search_query %}&q={{ search_query }}{% endif %}" class="btn btn-sm rounded-pill px-3 py-1 fw-medium {% if current_category == cat %}btn-orange-primary{% else %}btn-outline-secondary border bg-white{% endif %}" {% if current_category == cat %}style="background-color: #C65D24; border-color: #C65D24; color: #FFFFFF;"{% endif %}>
         {{ cat }}
       </a>
     {% endfor %}
@@ -39,21 +39,21 @@
   <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5">
     {% for story in blogs %}
       <div class="col">
-        <div class="card h-100 border-0 rounded-4 shadow-sm overflow-hidden bg-white hover-shadow transition-all">
+        <div class="card h-100 border rounded-4 shadow-sm overflow-hidden bg-white hover-shadow transition-all">
           <div class="position-relative" style="height: 190px;">
             <img src="{{ story.get_cover_image_url }}" alt="{{ story.title }}" class="w-100 h-100 object-fit-cover">
-            <span class="badge position-absolute top-0 start-0 m-3 px-2 py-1 rounded-pill" style="background-color: #eaf3ed; color: #166534; font-size: 0.72rem;">
+            <span class="badge position-absolute top-0 start-0 m-3 px-2 py-1 rounded-pill" style="background-color: #FFEDD5; color: #C65D24; font-size: 0.72rem; border: 1px solid rgba(198, 93, 36, 0.15);">
               {{ story.category }}
             </span>
           </div>
 
           <div class="card-body p-4 d-flex flex-column">
             <h2 class="h5 font-serif fw-bold mb-2">
-              <a href="{% url 'blogs:blog_detail' slug=story.slug %}" class="text-dark text-decoration-none hover-text-success">
+              <a href="{% url 'blogs:blog_detail' slug=story.slug %}" class="text-dark text-decoration-none hover-text-orange">
                 {{ story.title }}
               </a>
             </h2>
-            <p class="text-secondary small font-sans mb-3 line-clamp-2" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+            <p class="text-secondary small font-sans mb-3 line-clamp-2">
               {{ story.description }}
             </p>
 
@@ -61,7 +61,7 @@
               {% if story.author.profile.get_avatar_url %}
                 <img src="{{ story.author.profile.get_avatar_url }}" alt="{{ story.author.username }}" class="rounded-circle object-fit-cover border" width="32" height="32">
               {% else %}
-                <div class="rounded-circle text-success fw-bold d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; background-color: #eaf3ed; color: #166534; font-size: 0.85rem;">
+                <div class="rounded-circle fw-bold d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; background-color: #FFEDD5; color: #C65D24; font-size: 0.85rem;">
                   {{ story.author.first_name|default:story.author.username|slice:":1"|upper }}
                 </div>
               {% endif %}

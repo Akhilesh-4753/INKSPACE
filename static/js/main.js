@@ -20,10 +20,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const icon = this.querySelector('i');
       if (icon.classList.contains('bi-bookmark')) {
         icon.classList.replace('bi-bookmark', 'bi-bookmark-fill');
-        icon.classList.add('text-success');
+        icon.style.color = '#C65D24';
       } else {
         icon.classList.replace('bi-bookmark-fill', 'bi-bookmark');
-        icon.classList.remove('text-success');
+        icon.style.color = '';
       }
     });
   }
@@ -34,11 +34,16 @@ document.addEventListener('DOMContentLoaded', () => {
     followBtn.addEventListener('click', function () {
       if (this.textContent.includes('Follow')) {
         this.innerHTML = '<i class="bi bi-check2 me-1"></i> Following';
-        this.className = 'btn btn-success btn-sm rounded-pill w-100 fw-medium';
-        this.style.backgroundColor = '#166534';
+        this.className = 'btn btn-orange-secondary btn-sm rounded-pill w-100 fw-medium';
+        this.style.backgroundColor = '#FFEDD5';
+        this.style.color = '#C65D24';
+        this.style.borderColor = '#FDBA74';
       } else {
         this.innerHTML = '<i class="bi bi-plus-lg me-1"></i> Follow';
-        this.className = 'btn btn-outline-dark btn-sm rounded-pill w-100 fw-medium';
+        this.className = 'btn btn-orange-outline btn-sm rounded-pill w-100 fw-medium';
+        this.style.backgroundColor = 'transparent';
+        this.style.color = '#C65D24';
+        this.style.borderColor = '#C65D24';
       }
     });
   }

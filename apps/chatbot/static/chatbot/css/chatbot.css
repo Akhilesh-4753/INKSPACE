@@ -1,5 +1,5 @@
 /* ======================================================
-   INKSPACE GEMINI CHATBOT WIDGET STYLES
+   INKSPACE GEMINI CHATBOT WIDGET STYLES (ORANGE THEME)
    ====================================================== */
 
 .inkspace-chatbot-container {
@@ -11,7 +11,7 @@
 }
 
 .chatbot-trigger-btn {
-  background-color: #166534;
+  background-color: #C65D24;
   color: #FFFFFF;
   border: none;
   border-radius: 9999px;
@@ -24,9 +24,9 @@
 }
 
 .chatbot-trigger-btn:hover {
-  background-color: #14532d;
+  background-color: #9A3412;
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px -5px rgba(22, 101, 52, 0.4);
+  box-shadow: 0 10px 25px -5px rgba(198, 93, 36, 0.4);
 }
 
 .chatbot-window {
@@ -40,7 +40,7 @@
   display: flex;
   flex-direction: column;
   z-index: 1051;
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 20px 40px -10px rgba(41, 37, 36, 0.18), 0 0 0 1px rgba(231, 229, 228, 0.6);
   animation: slideUpFade 0.25s ease-out;
 }
 
@@ -57,7 +57,7 @@
 
 .chat-message.user-message {
   align-self: flex-end;
-  background-color: #166534;
+  background-color: #C65D24;
   color: #ffffff;
   border-radius: 18px 18px 4px 18px;
   padding: 10px 14px;
@@ -68,11 +68,13 @@
 
 .chat-message.assistant-message .message-content {
   border-radius: 18px 18px 18px 4px;
+  background-color: #ffffff;
+  border: 1px solid #E7E5E4;
 }
 
 .generated-card {
   background-color: #ffffff;
-  border: 1px solid #e4e4e7;
+  border: 1px solid #E7E5E4;
   border-radius: 12px;
   padding: 12px;
   margin-top: 8px;
@@ -81,14 +83,14 @@
 .generated-card h6 {
   font-family: 'Lora', Georgia, serif;
   font-weight: 700;
-  color: #18181b;
+  color: #292524;
   margin-bottom: 6px;
 }
 
 .action-chip {
-  background-color: #f4f4f5;
-  border: 1px solid #e4e4e7;
-  color: #27272a;
+  background-color: #FFF7ED;
+  border: 1px solid #FFEDD5;
+  color: #C65D24;
   border-radius: 9999px;
   padding: 3px 10px;
   font-size: 0.72rem;
@@ -97,16 +99,20 @@
 }
 
 .action-chip:hover {
-  background-color: #166534;
+  background-color: #C65D24;
   color: #ffffff;
-  border-color: #166534;
+  border-color: #C65D24;
 }
 
 .copy-mini-btn {
   font-size: 0.72rem;
-  color: #166534;
+  color: #C65D24;
   cursor: pointer;
   background: none;
   border: none;
   padding: 0;
+}
+
+.copy-mini-btn:hover {
+  color: #9A3412;
 }

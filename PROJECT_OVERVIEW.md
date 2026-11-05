@@ -16,7 +16,7 @@ INKSPACE incorporates an **AI Writing Assistant** powered by the **Google Gemini
 2. **Implement Secure CRUD Operations**: Enable authenticated authors to create, read, edit, delete, draft, and publish stories with strict ownership validation.
 3. **Real-world Authentication & Authorization**: Provide registration, login, logout, session management ("Remember me"), and user profile management.
 4. **Google Gemini Generative AI Integration**: Connect Django backend services to the Gemini API (`gemini-3.8-flash`) to generate structured blog content.
-5. **Modern Editorial UI Design**: Build a clean, responsive layout using Bootstrap 5 and custom CSS following an editorial color palette (`#166534` primary green, `#22C55E` accent, `#FAFAF7` paper background).
+5. **Modern Editorial UI Design**: Build a clean, responsive layout using Bootstrap 5 and custom CSS following an editorial color palette (`#C65D24` primary orange, `#E87932` secondary orange, `#F59E0B` accent orange, `#FFF7ED` warm cream paper background, `#FFEDD5` light orange, `#9A3412` hover orange).
 
 ---
 
@@ -289,10 +289,15 @@ sequenceDiagram
 
 ## 7. Frontend Design System
 
-- **Primary Green**: `#166534` (Tailwind Emerald 800) – Used for primary CTA buttons, active badges, and brand emblems.
-- **Accent Green**: `#22C55E` – Subtle highlights and active indicators.
-- **Warm Editorial Background**: `#FAFAF7` – Softer than stark white, evoking physical paper.
-- **Surfaces & Cards**: `#FFFFFF` with `0.5px` borders `#E4E4E7` and subtle elevation.
+- **Primary Orange**: `#C65D24` – Core brand color for primary CTA buttons, active states, brand emblem badges, and focus rings.
+- **Secondary Orange**: `#E87932` – Supporting warm tone for secondary accents and cards.
+- **Accent Orange**: `#F59E0B` – Highlights, stars, and attention badges.
+- **Light Cream Background**: `#FFF7ED` – Warm editorial paper surface background across the platform.
+- **Light Orange Background**: `#FFEDD5` – Category chips, draft badges, quote containers, and secondary pill buttons.
+- **Hover Orange**: `#9A3412` – Deep rich orange for interactive hover and pressed button states.
+- **Surfaces & Cards**: `#FFFFFF` with clean `1px` borders `#E7E5E4` and subtle elevation.
+- **Primary Text**: `#292524` (Warm Stone 800) – High contrast, easy on the eyes.
+- **Secondary Text**: `#78716C` (Warm Stone 500) – For subtitles, reading times, and metadata.
 - **Typography**: 
   - Headings: `Lora`, serif (400, 600, 700)
   - Body & UI: `Plus Jakarta Sans`, sans-serif (400, 500, 600)

@@ -11,19 +11,19 @@
       
       <!-- Editorial Header -->
       <div class="text-center mb-5 pb-3">
-        <span class="badge rounded-pill px-3 py-1 fw-bold text-uppercase mb-3" style="background-color: #eaf3ed; color: #166534; font-size: 0.78rem; letter-spacing: 0.05em;">
+        <span class="badge rounded-pill px-3 py-1 fw-bold text-uppercase mb-3" style="background-color: #FFEDD5; color: #C65D24; font-size: 0.78rem; letter-spacing: 0.05em; border: 1px solid rgba(198, 93, 36, 0.15);">
           Our Philosophy
         </span>
         <h1 class="display-4 font-serif fw-bold text-dark mb-3" style="line-height: 1.15;">
           Where Meaningful Stories Find Their Home
         </h1>
         <p class="lead text-secondary mx-auto" style="max-width: 620px; font-size: 1.15rem;">
-          INKSPACE is an intentional, Medium-inspired editorial publication engineered for thoughtful writers, developers, and curious thinkers.
+          INKSPACE is an intentional editorial publication engineered for thoughtful writers, developers, and curious thinkers.
         </p>
       </div>
 
       <!-- Hero Visual -->
-      <div class="rounded-4 overflow-hidden mb-5 shadow-sm">
+      <div class="rounded-4 overflow-hidden mb-5 shadow-sm border">
         <img src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=1200&q=80" alt="Editorial workspace with typewriter and notebooks" class="w-100 object-fit-cover" style="max-height: 400px;">
       </div>
 
@@ -61,7 +61,7 @@
 
         <!-- Community Callout Box -->
         <div class="p-4 p-md-5 rounded-4 border bg-white shadow-xs my-5 text-center">
-          <span class="d-inline-flex align-items-center justify-content-center text-white rounded-circle mb-3" style="width: 44px; height: 44px; background-color: #166534;">
+          <span class="d-inline-flex align-items-center justify-content-center text-white rounded-circle mb-3 shadow-xs" style="width: 44px; height: 44px; background-color: #C65D24;">
             <i class="bi bi-feather fs-5"></i>
           </span>
           <h3 class="h4 font-serif fw-bold text-dark mb-2">Join Our Thoughtful Community</h3>
@@ -71,9 +71,9 @@
           <div class="d-flex justify-content-center gap-3">
             <a href="{% url 'blogs:explore' %}" class="btn btn-outline-dark rounded-pill px-4 py-2">Explore Stories</a>
             {% if user.is_authenticated %}
-              <a href="{% url 'blogs:create_blog' %}" class="btn btn-success rounded-pill px-4 py-2" style="background-color: #166534; border-color: #166534;">Start Writing</a>
+              <a href="{% url 'blogs:create_blog' %}" class="btn btn-orange-primary rounded-pill px-4 py-2" style="background-color: #C65D24; border-color: #C65D24;">Start Writing</a>
             {% else %}
-              <a href="{% url 'accounts:signup' %}" class="btn btn-success rounded-pill px-4 py-2" style="background-color: #166534; border-color: #166534;">Create an Account</a>
+              <a href="{% url 'accounts:signup' %}" class="btn btn-orange-primary rounded-pill px-4 py-2" style="background-color: #C65D24; border-color: #C65D24;">Create an Account</a>
             {% endif %}
           </div>
         </div>

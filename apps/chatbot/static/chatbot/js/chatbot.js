@@ -129,7 +129,7 @@
       const wrapper = document.createElement('div');
       wrapper.className = 'chat-message assistant-message d-flex gap-2';
       wrapper.innerHTML = `
-        <div class="rounded-circle text-white d-flex align-items-center justify-content-center flex-shrink-0" style="width: 28px; height: 28px; background-color: #166534; font-size: 0.75rem;">
+        <div class="rounded-circle text-white d-flex align-items-center justify-content-center flex-shrink-0" style="width: 28px; height: 28px; background-color: #C65D24; font-size: 0.75rem;">
           <i class="bi bi-stars"></i>
         </div>
         <div class="message-content p-3 rounded-4 bg-white shadow-xs border text-dark font-sans small" style="max-width: 85%;">
@@ -145,28 +145,28 @@
       wrapper.className = 'chat-message assistant-message d-flex gap-2';
       
       const cardHtml = `
-        <div class="rounded-circle text-white d-flex align-items-center justify-content-center flex-shrink-0" style="width: 28px; height: 28px; background-color: #166534; font-size: 0.75rem;">
+        <div class="rounded-circle text-white d-flex align-items-center justify-content-center flex-shrink-0" style="width: 28px; height: 28px; background-color: #C65D24; font-size: 0.75rem;">
           <i class="bi bi-stars"></i>
         </div>
         <div class="message-content p-3 rounded-4 bg-white shadow-xs border text-dark font-sans small w-100" style="max-width: 90%;">
           <div class="d-flex justify-content-between align-items-center mb-2">
-            <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill" style="font-size: 0.7rem;">Draft Ready</span>
-            <button class="btn btn-sm btn-outline-success py-0 px-2 rounded-pill apply-to-editor-btn" style="font-size: 0.72rem;">
+            <span class="badge rounded-pill" style="background-color: #FFEDD5; color: #C65D24; font-size: 0.7rem; border: 1px solid #FDBA74;">Draft Ready</span>
+            <button class="btn btn-sm btn-orange-outline py-0 px-2 rounded-pill apply-to-editor-btn" style="font-size: 0.72rem;">
               <i class="bi bi-arrow-down-circle me-1"></i> Use in Editor
             </button>
           </div>
 
-          <div class="mb-2 p-2 bg-light rounded border">
+          <div class="mb-2 p-2 rounded border" style="background-color: #FFF7ED;">
             <div class="text-muted fw-bold" style="font-size: 0.68rem; text-transform: uppercase;">Title:</div>
             <div class="fw-bold font-serif text-dark blog-card-title">${escapeHtml(data.title)}</div>
           </div>
 
-          <div class="mb-2 p-2 bg-light rounded border">
+          <div class="mb-2 p-2 rounded border" style="background-color: #FFF7ED;">
             <div class="text-muted fw-bold" style="font-size: 0.68rem; text-transform: uppercase;">Description:</div>
             <div class="text-secondary small blog-card-desc">${escapeHtml(data.description)}</div>
           </div>
 
-          <div class="p-2 bg-light rounded border">
+          <div class="p-2 rounded border" style="background-color: #FFF7ED;">
             <div class="text-muted fw-bold mb-1" style="font-size: 0.68rem; text-transform: uppercase;">Content Preview:</div>
             <div class="text-dark small blog-card-content overflow-auto" style="max-height: 120px; font-size: 0.78rem;">
               ${data.content}
@@ -195,7 +195,7 @@
             if (countEl) countEl.textContent = `${descInput.value.length}/200`;
 
             useBtn.innerHTML = '<i class="bi bi-check2"></i> Applied!';
-            useBtn.className = 'btn btn-sm btn-success py-0 px-2 rounded-pill';
+            useBtn.className = 'btn btn-sm btn-orange-primary py-0 px-2 rounded-pill';
           } else {
             alert('Go to the "Write a Blog" page to insert this generated content into the editor!');
           }
