@@ -1,0 +1,1 @@
+"""Accounts initial migrations."""

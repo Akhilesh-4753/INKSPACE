@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}404 Not Found – INKSPACE{% endblock %}
+
+{% block content %}
+<div class="container py-5 text-center my-auto">
+  <div class="py-5">
+    <div class="display-1 fw-bold text-success" style="font-family: 'Lora', Georgia, serif; color: #166534 !important;">404</div>
+    <h1 class="h2 fw-bold mt-3 text-dark">Page Not Found</h1>
+    <p class="text-muted mt-2 mx-auto" style="max-width: 480px;">
+      The story or page you are looking for doesn't exist, may have been removed, or is set to private draft status.
+    </p>
+    <div class="mt-4 d-flex justify-content-center gap-3">
+      <a href="{% url 'blogs:blog_list' %}" class="btn btn-success px-4 py-2 rounded-pill" style="background-color: #166534;">Back to Home</a>
+      <a href="{% url 'blogs:explore' %}" class="btn btn-outline-dark px-4 py-2 rounded-pill">Explore Stories</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

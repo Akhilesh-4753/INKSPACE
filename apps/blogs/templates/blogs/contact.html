@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Contact Us – INKSPACE{% endblock %}
+{% block meta_description %}Get in touch with the INKSPACE editorial and development team for inquiries, feedback, or collaborations.{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-10 col-xl-9">
+      
+      <!-- Header -->
+      <div class="text-center mb-5">
+        <span class="badge rounded-pill px-3 py-1 fw-bold text-uppercase mb-3" style="background-color: #eaf3ed; color: #166534; font-size: 0.78rem; letter-spacing: 0.05em;">
+          Get in Touch
+        </span>
+        <h1 class="display-5 font-serif fw-bold text-dark mb-2">
+          We'd Love to Hear From You
+        </h1>
+        <p class="text-secondary mx-auto" style="max-width: 540px;">
+          Have questions about publishing, feedback on our AI Assistant, or ideas for improving INKSPACE? Drop us a note below.
+        </p>
+      </div>
+
+      <div class="row g-4 align-items-stretch">
+        
+        <!-- Left: Contact Information Cards -->
+        <div class="col-md-5">
+          <div class="card border-0 rounded-4 shadow-sm p-4 p-lg-5 bg-white h-100 d-flex flex-column justify-content-between">
+            <div>
+              <h2 class="h5 font-serif fw-bold text-dark mb-4">Contact Information</h2>
+
+              <div class="d-flex align-items-start gap-3 mb-4">
+                <div class="rounded-circle text-success d-flex align-items-center justify-content-center flex-shrink-0" style="width: 40px; height: 40px; background-color: #eaf3ed; color: #166534;">
+                  <i class="bi bi-envelope fs-5"></i>
+                </div>
+                <div>
+                  <div class="small fw-bold text-dark">Email Support</div>
+                  <div class="text-secondary small">akhipn4753@gmail.com</div>
+                  <div class="text-muted" style="font-size: 0.75rem;">Responses within 24–48 hours</div>
+                </div>
+              </div>
+
+              <div class="d-flex align-items-start gap-3 mb-4">
+                <div class="rounded-circle text-success d-flex align-items-center justify-content-center flex-shrink-0" style="width: 40px; height: 40px; background-color: #eaf3ed; color: #166534;">
+                  <i class="bi bi-clock-history fs-5"></i>
+                </div>
+                <div>
+                  <div class="small fw-bold text-dark">Platform Availability</div>
+                  <div class="text-secondary small">Monday – Friday: 9 AM – 6 PM IST</div>
+                  <div class="text-muted" style="font-size: 0.75rem;">Platform hosted on Google Cloud</div>
+                </div>
+              </div>
+
+              <div class="d-flex align-items-start gap-3">
+                <div class="rounded-circle text-success d-flex align-items-center justify-content-center flex-shrink-0" style="width: 40px; height: 40px; background-color: #eaf3ed; color: #166534;">
+                  <i class="bi bi-chat-heart fs-5"></i>
+                </div>
+                <div>
+                  <div class="small fw-bold text-dark">Community Feedback</div>
+                  <div class="text-secondary small">Open Source & Learning Project</div>
+                  <div class="text-muted" style="font-size: 0.75rem;">Contributions & feedback welcome</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Social Links Panel -->
+            <div class="pt-4 border-top mt-4">
+              <div class="small fw-bold text-dark mb-2">Connect Directly:</div>
+              <div class="d-flex align-items-center gap-3 fs-5">
+                <a href="https://github.com/Akhilesh-4753/" target="_blank" rel="noopener noreferrer" class="text-secondary hover-text-dark" aria-label="GitHub Profile" title="GitHub">
+                  <i class="bi bi-github"></i>
+                </a>
+                <a href="https://www.linkedin.com/in/akhilesh4753" target="_blank" rel="noopener noreferrer" class="text-secondary hover-text-dark" aria-label="LinkedIn Profile" title="LinkedIn">
+                  <i class="bi bi-linkedin"></i>
+                </a>
+                <a href="https://www.instagram.com/_akhiles___h__" target="_blank" rel="noopener noreferrer" class="text-secondary hover-text-dark" aria-label="Instagram Profile" title="Instagram">
+                  <i class="bi bi-instagram"></i>
+                </a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Right: Contact Form -->
+        <div class="col-md-7">
+          <div class="card border-0 rounded-4 shadow-sm p-4 p-lg-5 bg-white h-100">
+            <h2 class="h5 font-serif fw-bold text-dark mb-1">Send a Message</h2>
+            <p class="text-secondary small mb-4">Fill out the form below and we will respond as soon as possible.</p>
+
+            <form method="post" action="{% url 'blogs:contact' %}" novalidate>
+              {% csrf_token %}
+
+              <div class="mb-3">
+                <label for="contact_name" class="form-label small fw-semibold text-secondary">Your Name <span class="text-danger">*</span></label>
+                {{ form.name }}
+                {% if form.name.errors %}
+                  <div class="text-danger small mt-1">{{ form.name.errors.0 }}</div>
+                {% endif %}
+              </div>
+
+              <div class="mb-3">
+                <label for="contact_email" class="form-label small fw-semibold text-secondary">Your Email <span class="text-danger">*</span></label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                  <div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>
+                {% endif %}
+              </div>
+
+              <div class="mb-3">
+                <label for="contact_subject" class="form-label small fw-semibold text-secondary">Subject <span class="text-danger">*</span></label>
+                {{ form.subject }}
+                {% if form.subject.errors %}
+                  <div class="text-danger small mt-1">{{ form.subject.errors.0 }}</div>
+                {% endif %}
+              </div>
+
+              <div class="mb-4">
+                <label for="contact_message" class="form-label small fw-semibold text-secondary">Message <span class="text-danger">*</span></label>
+                {{ form.message }}
+                {% if form.message.errors %}
+                  <div class="text-danger small mt-1">{{ form.message.errors.0 }}</div>
+                {% endif %}
+              </div>
+
+              <button type="submit" class="btn btn-success w-100 py-2.5 rounded-pill fw-medium shadow-sm" style="background-color: #166534; border-color: #166534;">
+                <i class="bi bi-send me-1"></i> Send Message
+              </button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

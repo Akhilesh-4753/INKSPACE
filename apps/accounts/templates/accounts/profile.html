@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Profile – INKSPACE{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+        <div class="d-flex align-items-center gap-4 mb-4 pb-4 border-bottom">
+          <div class="position-relative">
+            {% if user.profile.get_avatar_url %}
+              <img src="{{ user.profile.get_avatar_url }}" alt="{{ user.username }}" class="rounded-circle object-fit-cover border" width="80" height="80">
+            {% else %}
+              <div class="rounded-circle text-success fw-bold d-flex align-items-center justify-content-center border fs-3" style="width: 80px; height: 80px; background-color: #eaf3ed !important; color: #166534 !important;">
+                {{ user.first_name|default:user.username|slice:":1"|upper }}
+              </div>
+            {% endif %}
+          </div>
+          <div>
+            <h1 class="h4 fw-bold font-serif mb-1">{{ user.get_full_name|default:user.username }}</h1>
+            <p class="text-muted small mb-1">@{{ user.username }} &bull; {{ user.profile.role }}</p>
+            <p class="text-secondary small mb-0">{{ user.profile.bio }}</p>
+          </div>
+        </div>
+
+        <h2 class="h5 fw-bold font-serif mb-3">Edit Profile Information</h2>
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="id_role" class="form-label small fw-semibold text-secondary">Designation / Role</label>
+            {{ form.role }}
+          </div>
+
+          <div class="mb-3">
+            <label for="id_bio" class="form-label small fw-semibold text-secondary">Author Bio</label>
+            {{ form.bio }}
+            <div class="form-text text-muted">Displayed on the author card beside your published stories.</div>
+          </div>
+
+          <div class="mb-4">
+            <label for="id_avatar" class="form-label small fw-semibold text-secondary">Profile Avatar</label>
+            {{ form.avatar }}
+          </div>
+
+          <div class="d-flex justify-content-end gap-3">
+            <a href="{% url 'blogs:my_blogs' %}" class="btn btn-outline-secondary px-4 rounded-pill">Cancel</a>
+            <button type="submit" class="btn btn-success px-4 rounded-pill" style="background-color: #166534; border-color: #166534;">Save Profile</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

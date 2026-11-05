@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About INKSPACE – A Minimal Editorial Blogging Platform{% endblock %}
+{% block meta_description %}Learn about INKSPACE, our philosophy of thoughtful writing, and how our platform empowers storytellers and developers.{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-9 col-xl-8">
+      
+      <!-- Editorial Header -->
+      <div class="text-center mb-5 pb-3">
+        <span class="badge rounded-pill px-3 py-1 fw-bold text-uppercase mb-3" style="background-color: #eaf3ed; color: #166534; font-size: 0.78rem; letter-spacing: 0.05em;">
+          Our Philosophy
+        </span>
+        <h1 class="display-4 font-serif fw-bold text-dark mb-3" style="line-height: 1.15;">
+          Where Meaningful Stories Find Their Home
+        </h1>
+        <p class="lead text-secondary mx-auto" style="max-width: 620px; font-size: 1.15rem;">
+          INKSPACE is an intentional, Medium-inspired editorial publication engineered for thoughtful writers, developers, and curious thinkers.
+        </p>
+      </div>
+
+      <!-- Hero Visual -->
+      <div class="rounded-4 overflow-hidden mb-5 shadow-sm">
+        <img src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=1200&q=80" alt="Editorial workspace with typewriter and notebooks" class="w-100 object-fit-cover" style="max-height: 400px;">
+      </div>
+
+      <!-- Main Editorial Body -->
+      <div class="article-content font-serif text-dark fs-5" style="line-height: 1.85;">
+        
+        <h2>The Purpose of INKSPACE</h2>
+        <p>
+          In a world cluttered with infinite algorithmic feeds, pop-ups, and click-driven noise, the beauty of the written word often gets lost. We built <strong>INKSPACE</strong> with a singular mission: to provide an elegant, calm, and distraction-free sanctuary where ideas can breathe.
+        </p>
+        <p>
+          Inspired by timeless publications and the clarity of Python Django's architectural philosophy, INKSPACE combines clean serif typography, generous whitespace, and responsive design so that reading feels as satisfying as turning the pages of an artisanal journal.
+        </p>
+
+        <blockquote>
+          "Writing is the art of discovering what you believe. Every story deserves a place to be heard."
+        </blockquote>
+
+        <h2>What You Can Do on INKSPACE</h2>
+        <ul>
+          <li><strong>Write and Publish:</strong> Craft long-form articles, tutorials, personal essays, or travelogues with a distraction-free rich editor.</li>
+          <li><strong>Draft Privately:</strong> Keep work-in-progress thoughts saved safely in draft mode until you are confident and ready to share them with the world.</li>
+          <li><strong>Follow Inspiring Authors:</strong> Stay connected with writers whose perspectives you admire, exploring their latest thoughts across technology, travel, and lifestyle.</li>
+          <li><strong>AI Writing Assistance:</strong> Spark new creativity using our integrated AI Assistant to generate catchy headlines, refine summaries, and structure complete article drafts.</li>
+          <li><strong>Curated Exploration:</strong> Discover stories organized by meaningful categories, estimated reading times, and author profiles.</li>
+        </ul>
+
+        <h2>Share Your Voice</h2>
+        <p>
+          We believe that everyone holds valuable knowledge shaped by unique lived experiences. Whether you are explaining an architectural pattern in web development, reflecting on a silent morning along the misty hills of Kerala, or sharing quiet habits that restored your mental focus—your perspective matters.
+        </p>
+        <p>
+          You do not need a massive following or decades of journalism experience to publish on INKSPACE. All you need is an idea, an authentic voice, and the willingness to put pen to paper.
+        </p>
+
+        <!-- Community Callout Box -->
+        <div class="p-4 p-md-5 rounded-4 border bg-white shadow-xs my-5 text-center">
+          <span class="d-inline-flex align-items-center justify-content-center text-white rounded-circle mb-3" style="width: 44px; height: 44px; background-color: #166534;">
+            <i class="bi bi-feather fs-5"></i>
+          </span>
+          <h3 class="h4 font-serif fw-bold text-dark mb-2">Join Our Thoughtful Community</h3>
+          <p class="text-secondary small mx-auto mb-4" style="max-width: 480px;">
+            Ready to share your insights? Join fellow writers who believe in craft, depth, and genuine connection.
+          </p>
+          <div class="d-flex justify-content-center gap-3">
+            <a href="{% url 'blogs:explore' %}" class="btn btn-outline-dark rounded-pill px-4 py-2">Explore Stories</a>
+            {% if user.is_authenticated %}
+              <a href="{% url 'blogs:create_blog' %}" class="btn btn-success rounded-pill px-4 py-2" style="background-color: #166534; border-color: #166534;">Start Writing</a>
+            {% else %}
+              <a href="{% url 'accounts:signup' %}" class="btn btn-success rounded-pill px-4 py-2" style="background-color: #166534; border-color: #166534;">Create an Account</a>
+            {% endif %}
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

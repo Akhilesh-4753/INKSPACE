@@ -1,0 +1,112 @@
+/* ======================================================
+   INKSPACE GEMINI CHATBOT WIDGET STYLES
+   ====================================================== */
+
+.inkspace-chatbot-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1050;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+.chatbot-trigger-btn {
+  background-color: #166534;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 9999px;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.chatbot-trigger-btn:hover {
+  background-color: #14532d;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(22, 101, 52, 0.4);
+}
+
+.chatbot-window {
+  position: absolute;
+  bottom: 65px;
+  right: 0;
+  width: 380px;
+  max-width: calc(100vw - 32px);
+  height: 540px;
+  max-height: calc(100vh - 120px);
+  display: flex;
+  flex-direction: column;
+  z-index: 1051;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  animation: slideUpFade 0.25s ease-out;
+}
+
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.chat-message.user-message {
+  align-self: flex-end;
+  background-color: #166534;
+  color: #ffffff;
+  border-radius: 18px 18px 4px 18px;
+  padding: 10px 14px;
+  max-width: 85%;
+  font-size: 0.85rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+}
+
+.chat-message.assistant-message .message-content {
+  border-radius: 18px 18px 18px 4px;
+}
+
+.generated-card {
+  background-color: #ffffff;
+  border: 1px solid #e4e4e7;
+  border-radius: 12px;
+  padding: 12px;
+  margin-top: 8px;
+}
+
+.generated-card h6 {
+  font-family: 'Lora', Georgia, serif;
+  font-weight: 700;
+  color: #18181b;
+  margin-bottom: 6px;
+}
+
+.action-chip {
+  background-color: #f4f4f5;
+  border: 1px solid #e4e4e7;
+  color: #27272a;
+  border-radius: 9999px;
+  padding: 3px 10px;
+  font-size: 0.72rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.action-chip:hover {
+  background-color: #166534;
+  color: #ffffff;
+  border-color: #166534;
+}
+
+.copy-mini-btn {
+  font-size: 0.72rem;
+  color: #166534;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}

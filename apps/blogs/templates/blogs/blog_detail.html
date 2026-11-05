@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ blog.title }} – INKSPACE{% endblock %}
+{% block meta_description %}{{ blog.description }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Breadcrumbs & Back Navigation -->
+  <div class="mb-3">
+    <a href="{% url 'blogs:blog_list' %}" class="text-decoration-none text-muted small d-inline-flex align-items-center gap-1 hover-text-dark">
+      <i class="bi bi-arrow-left"></i>
+      <span>Back to stories</span>
+    </a>
+  </div>
+
+  <div class="row g-5">
+    <!-- Main Article Column -->
+    <div class="col-lg-8">
+      
+      <!-- Category Badge -->
+      <div class="mb-3">
+        <a href="{% url 'blogs:explore' %}?category={{ blog.category }}" class="badge rounded-pill text-decoration-none px-3 py-1 fw-semibold text-uppercase" style="background-color: #eaf3ed; color: #166534; font-size: 0.78rem; letter-spacing: 0.05em;">
+          {{ blog.category }}
+        </a>
+        {% if blog.status == 'Draft' %}
+          <span class="badge bg-warning text-dark rounded-pill px-3 py-1 ms-2">Draft (Private)</span>
+        {% endif %}
+      </div>
+
+      <!-- Main Headline -->
+      <h1 class="display-5 font-serif fw-bold text-dark mb-3" style="line-height: 1.2;">
+        {{ blog.title }}
+      </h1>
+
+      <!-- Subtitle / Short Description -->
+      <p class="lead text-secondary font-sans mb-4" style="line-height: 1.6; font-size: 1.2rem;">
+        {{ blog.description }}
+      </p>
+
+      <!-- Author Metadata & Social Actions Bar -->
+      <div class="d-flex justify-content-between align-items-center py-3 border-top border-bottom mb-4">
+        <div class="d-flex align-items-center gap-3">
+          {% if blog.author.profile.get_avatar_url %}
+            <img src="{{ blog.author.profile.get_avatar_url }}" alt="{{ blog.author.username }}" class="rounded-circle object-fit-cover border" width="44" height="44">
+          {% else %}
+            <div class="rounded-circle text-success fw-bold d-flex align-items-center justify-content-center border fs-5" style="width: 44px; height: 44px; background-color: #eaf3ed; color: #166534;">
+              {{ blog.author.first_name|default:blog.author.username|slice:":1"|upper }}
+            </div>
+          {% endif %}
+          <div>
+            <div class="fw-semibold text-dark">{{ blog.author.get_full_name|default:blog.author.username }}</div>
+            <div class="text-muted small">
+              {{ blog.created_at|date:"M d, Y" }} &bull; {{ blog.reading_time }} min read &bull; <i class="bi bi-eye"></i> {{ blog.views_count }} views
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+          {% if user == blog.author %}
+            <a href="{% url 'blogs:edit_blog' slug=blog.slug %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 me-2">
+              <i class="bi bi-pencil me-1"></i> Edit
+            </a>
+          {% endif %}
+          <button class="btn btn-sm btn-light rounded-circle text-secondary p-2 d-flex align-items-center justify-content-center" title="Save story" id="bookmarkBtn">
+            <i class="bi bi-bookmark"></i>
+          </button>
+          <button class="btn btn-sm btn-light rounded-circle text-secondary p-2 d-flex align-items-center justify-content-center" title="Share story" id="shareBtn" onclick="navigator.clipboard.writeText(window.location.href); alert('Story link copied to clipboard!');">
+            <i class="bi bi-share"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Hero Cover Image -->
+      <div class="rounded-4 overflow-hidden mb-5 shadow-sm">
+        <img src="{{ blog.get_cover_image_url }}" alt="{{ blog.title }}" class="w-100 object-fit-cover" style="max-height: 480px;">
+      </div>
+
+      <!-- Article Body Content -->
+      <article class="article-content font-serif fs-5 text-dark" style="line-height: 1.85;">
+        {{ blog.content|safe|linebreaks }}
+      </article>
+
+      <!-- Bottom Author Card & Back Button -->
+      <div class="mt-5 pt-4 border-top d-flex justify-content-between align-items-center">
+        <a href="{% url 'blogs:blog_list' %}" class="btn btn-outline-dark rounded-pill px-4">
+          <i class="bi bi-arrow-left me-1"></i> Back to all stories
+        </a>
+        <div class="d-flex gap-2">
+          <button class="btn btn-light rounded-pill px-3 text-secondary" onclick="window.scrollTo({top: 0, behavior: 'smooth'});">
+            <i class="bi bi-arrow-up me-1"></i> Top
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Sidebar Column -->
+    <div class="col-lg-4">
+      <div class="position-sticky" style="top: 100px;">
+        
+        <!-- About the Author Card -->
+        <div class="card border-0 rounded-4 shadow-sm p-4 bg-white mb-4">
+          <h2 class="h6 text-uppercase fw-bold text-muted mb-3" style="letter-spacing: 0.05em; font-size: 0.78rem;">About the Author</h2>
+          
+          <div class="d-flex align-items-center gap-3 mb-3">
+            {% if blog.author.profile.get_avatar_url %}
+              <img src="{{ blog.author.profile.get_avatar_url }}" alt="{{ blog.author.username }}" class="rounded-circle object-fit-cover border" width="56" height="56">
+            {% else %}
+              <div class="rounded-circle text-success fw-bold d-flex align-items-center justify-content-center border fs-4" style="width: 56px; height: 56px; background-color: #eaf3ed; color: #166534;">
+                {{ blog.author.first_name|default:blog.author.username|slice:":1"|upper }}
+              </div>
+            {% endif %}
+            <div>
+              <div class="fw-bold font-serif text-dark fs-6">{{ blog.author.get_full_name|default:blog.author.username }}</div>
+              <div class="text-muted small">{{ blog.author.profile.role|default:"Blogger &bull; Writer" }}</div>
+            </div>
+          </div>
+
+          <p class="text-secondary small font-sans mb-3">
+            {{ blog.author.profile.bio|default:"I write about travel, productivity, technology and everyday life experiences." }}
+          </p>
+
+          {% if not is_author %}
+            {% if user.is_authenticated %}
+              <form action="{% url 'accounts:toggle_follow' author_id=blog.author.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn {% if is_following %}btn-success{% else %}btn-outline-dark{% endif %} btn-sm rounded-pill w-100 fw-medium" style="{% if is_following %}background-color: #166534; border-color: #166534;{% endif %}">
+                  {% if is_following %}
+                    <i class="bi bi-check2 me-1"></i> Following
+                  {% else %}
+                    <i class="bi bi-plus-lg me-1"></i> Follow
+                  {% endif %}
+                </button>
+              </form>
+            {% else %}
+              <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-outline-dark btn-sm rounded-pill w-100 fw-medium">
+                <i class="bi bi-plus-lg me-1"></i> Follow
+              </a>
+            {% endif %}
+          {% endif %}
+        </div>
+
+        <!-- More from this Author -->
+        {% if more_from_author %}
+        <div class="card border-0 rounded-4 shadow-sm p-4 bg-white">
+          <h2 class="h6 text-uppercase fw-bold text-muted mb-3" style="letter-spacing: 0.05em; font-size: 0.78rem;">More from {{ blog.author.first_name|default:blog.author.username }}</h2>
+          <div class="d-flex flex-column gap-3">
+            {% for other_blog in more_from_author %}
+              <a href="{% url 'blogs:blog_detail' slug=other_blog.slug %}" class="text-decoration-none text-dark d-flex gap-3 align-items-center group">
+                <div class="rounded-3 overflow-hidden flex-shrink-0" style="width: 68px; height: 54px; background: #eee;">
+                  <img src="{{ other_blog.get_cover_image_url }}" alt="{{ other_blog.title }}" class="w-100 h-100 object-fit-cover">
+                </div>
+                <div>
+                  <h3 class="fw-semibold small font-serif mb-1 line-clamp-2 hover-text-success">{{ other_blog.title }}</h3>
+                  <div class="text-muted" style="font-size: 0.72rem;">{{ other_blog.created_at|date:"M d, Y" }}</div>
+                </div>
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

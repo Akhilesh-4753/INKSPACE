@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}403 Forbidden – INKSPACE{% endblock %}
+
+{% block content %}
+<div class="container py-5 text-center my-auto">
+  <div class="py-5">
+    <div class="display-1 fw-bold text-success" style="font-family: 'Lora', Georgia, serif; color: #166534 !important;">403</div>
+    <h1 class="h2 fw-bold mt-3 text-dark">Access Restricted</h1>
+    <p class="text-muted mt-2 max-w-md mx-auto" style="max-width: 480px;">
+      You do not have permission to access this resource or edit this story. Only the verified author of a blog post can modify or delete it.
+    </p>
+    <div class="mt-4">
+      <a href="{% url 'blogs:blog_list' %}" class="btn btn-success px-4 py-2 rounded-pill" style="background-color: #166534;">Return Home</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

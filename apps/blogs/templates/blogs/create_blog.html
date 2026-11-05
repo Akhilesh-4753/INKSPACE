@@ -1,0 +1,433 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Write a New Blog – INKSPACE{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Header with Back Link -->
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div class="d-flex align-items-center gap-3">
+      <a href="{% url 'blogs:my_blogs' %}" class="btn btn-sm btn-light rounded-circle text-dark p-2 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" title="Back to My Blogs">
+        <i class="bi bi-arrow-left"></i>
+      </a>
+      <h1 class="h3 fw-bold font-serif mb-0 text-dark">Write a New Blog</h1>
+    </div>
+
+    <!-- AI Writing Assistant Trigger Button -->
+    <button type="button" class="btn btn-outline-success d-inline-flex align-items-center gap-2 rounded-pill px-3 py-2 fw-medium shadow-sm" data-bs-toggle="modal" data-bs-target="#aiGeneratorModal" style="color: #166534; border-color: #166534;">
+      <i class="bi bi-stars text-success"></i>
+      <span>Generate with AI</span>
+    </button>
+  </div>
+
+  <form method="post" enctype="multipart/form-data" id="blogPostForm" novalidate>
+    {% csrf_token %}
+
+    <div class="row g-4">
+      
+      <!-- Main Content Editor Column (Left) -->
+      <div class="col-lg-8">
+        <div class="card border-0 rounded-4 shadow-sm p-4 p-md-5 bg-white">
+          
+          <!-- Title Input -->
+          <div class="mb-4">
+            <label for="id_title" class="form-label fw-bold text-dark font-serif fs-5">Title <span class="text-danger">*</span></label>
+            <input type="text" name="title" id="id_title" value="{{ form.title.value|default:'' }}" class="form-control form-control-lg font-serif border rounded-3 py-3 px-3 fs-4" placeholder="Enter a catchy title for your blog" required>
+            {% if form.title.errors %}
+              <div class="text-danger small mt-1">{{ form.title.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          <!-- Short Description -->
+          <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <label for="id_description" class="form-label fw-semibold text-secondary small">Short Description <span class="text-danger">*</span></label>
+              <span class="text-muted small" id="descCharCount">0/200</span>
+            </div>
+            <textarea name="description" id="id_description" rows="3" class="form-control rounded-3" placeholder="Write a short summary (max 200 characters)" maxlength="250" required>{{ form.description.value|default:'' }}</textarea>
+            {% if form.description.errors %}
+              <div class="text-danger small mt-1">{{ form.description.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          <!-- Category Selection -->
+          <div class="mb-4">
+            <label for="id_category" class="form-label fw-semibold text-secondary small">Category <span class="text-danger">*</span></label>
+            <select name="category" id="id_category" class="form-select rounded-3 py-2" required>
+              <option value="" disabled {% if not form.category.value %}selected{% endif %}>Select a category</option>
+              <option value="Travel" {% if form.category.value == 'Travel' %}selected{% endif %}>Travel</option>
+              <option value="Technology" {% if form.category.value == 'Technology' %}selected{% endif %}>Technology</option>
+              <option value="Lifestyle" {% if form.category.value == 'Lifestyle' %}selected{% endif %}>Lifestyle</option>
+              <option value="Food" {% if form.category.value == 'Food' %}selected{% endif %}>Food</option>
+              <option value="Education" {% if form.category.value == 'Education' %}selected{% endif %}>Education</option>
+              <option value="Health" {% if form.category.value == 'Health' %}selected{% endif %}>Health</option>
+            </select>
+            {% if form.category.errors %}
+              <div class="text-danger small mt-1">{{ form.category.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          <!-- Main Content with Editorial Formatting Toolbar -->
+          <div class="mb-2">
+            <label for="id_content" class="form-label fw-semibold text-secondary small">Content <span class="text-danger">*</span></label>
+            
+            <!-- Formatting Toolbar -->
+            <div class="editor-toolbar bg-light border border-bottom-0 rounded-top-3 p-2 d-flex flex-wrap align-items-center gap-1">
+              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="bold" title="Bold"><i class="bi bi-type-bold"></i></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="italic" title="Italic"><i class="bi bi-type-italic"></i></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="underline" title="Underline"><i class="bi bi-type-underline"></i></button>
+              <div class="vr mx-1 my-1"></div>
+              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="h1" title="Heading 1"><span class="fw-bold">H1</span></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="h2" title="Heading 2"><span class="fw-bold">H2</span></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="h3" title="Heading 3"><span class="fw-bold">H3</span></button>
+              <div class="vr mx-1 my-1"></div>
+              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="ul" title="Bullet List"><i class="bi bi-list-ul"></i></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="ol" title="Numbered List"><i class="bi bi-list-ol"></i></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="quote" title="Blockquote"><i class="bi bi-quote"></i></button>
+              <div class="vr mx-1 my-1"></div>
+              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="link" title="Insert Link"><i class="bi bi-link-45deg"></i></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="code" title="Code Block"><i class="bi bi-code-slash"></i></button>
+            </div>
+
+            <!-- Content Textarea -->
+            <textarea name="content" id="id_content" rows="14" class="form-control rounded-bottom-3 border-top-0 font-sans p-3" placeholder="Start writing your blog here..." style="min-height: 340px; font-size: 1rem; line-height: 1.6;" required>{{ form.content.value|default:'' }}</textarea>
+            {% if form.content.errors %}
+              <div class="text-danger small mt-1">{{ form.content.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Sidebar Options Column (Right) -->
+      <div class="col-lg-4">
+        
+        <!-- Cover Image Upload Box -->
+        <div class="card border-0 rounded-4 shadow-sm p-4 bg-white mb-4">
+          <label class="form-label fw-bold text-dark font-serif fs-6 mb-2">Cover Image <span class="text-danger">*</span></label>
+          
+          <div class="upload-dropzone border border-dashed rounded-3 p-4 text-center bg-light position-relative cursor-pointer" id="coverDropzone">
+            <input type="file" name="cover_image" id="id_cover_image" class="position-absolute top-0 start-0 w-100 h-100 opacity-0 cursor-pointer" accept="image/*">
+            <div id="dropzonePrompt">
+              <i class="bi bi-image fs-1 text-success mb-2 d-block" style="color: #166534 !important;"></i>
+              <div class="small fw-semibold text-dark">Click to upload or drag and drop</div>
+              <div class="text-muted" style="font-size: 0.72rem;">PNG, JPG (Max 5 MB)</div>
+            </div>
+            <div id="dropzonePreview" class="d-none">
+              <img id="imagePreviewElement" src="#" alt="Preview" class="img-fluid rounded-2 mb-2" style="max-height: 160px; object-fit: cover;">
+              <div class="small text-muted" id="previewFileName"></div>
+              <button type="button" class="btn btn-sm btn-outline-danger mt-2 py-0 px-2" id="removeImageBtn">Remove</button>
+            </div>
+          </div>
+          {% if form.cover_image.errors %}
+            <div class="text-danger small mt-1">{{ form.cover_image.errors.0 }}</div>
+          {% endif %}
+        </div>
+
+        <!-- Publish Options -->
+        <div class="card border-0 rounded-4 shadow-sm p-4 bg-white mb-4">
+          <label class="form-label fw-bold text-dark font-serif fs-6 mb-3">Publish Options</label>
+
+          <div class="form-check mb-3 p-3 rounded-3 border bg-light bg-opacity-50">
+            <input class="form-check-input" type="radio" name="status" id="statusDraft" value="Draft" {% if form.status.value != 'Published' %}checked{% endif %}>
+            <label class="form-check-label ms-2" for="statusDraft">
+              <strong class="d-block text-dark">Save as Draft</strong>
+              <span class="text-muted small">Keep it private and edit later.</span>
+            </label>
+          </div>
+
+          <div class="form-check p-3 rounded-3 border bg-light bg-opacity-50">
+            <input class="form-check-input" type="radio" name="status" id="statusPublished" value="Published" {% if form.status.value == 'Published' %}checked{% endif %}>
+            <label class="form-check-label ms-2" for="statusPublished">
+              <strong class="d-block text-dark">Publish Now</strong>
+              <span class="text-muted small">Make it live for everyone to read.</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Action Submission Buttons -->
+        <div class="d-flex gap-3">
+          <button type="submit" name="action" value="draft" class="btn btn-outline-secondary flex-grow-1 py-2 rounded-pill fw-medium">
+            Save as Draft
+          </button>
+          <button type="submit" name="action" value="publish" class="btn btn-success flex-grow-1 py-2 rounded-pill fw-medium shadow-sm" style="background-color: #166534; border-color: #166534;">
+            Publish Blog
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+  </form>
+
+</div>
+
+<!-- ================= AI GENERATOR MODAL ================= -->
+<div class="modal fade" id="aiGeneratorModal" tabindex="-1" aria-labelledby="aiGeneratorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content rounded-4 border-0 shadow">
+      
+      <div class="modal-header border-bottom p-4" style="background: linear-gradient(135deg, #166534 0%, #1e3a29 100%);">
+        <div class="d-flex align-items-center gap-2 text-white">
+          <i class="bi bi-stars fs-4 text-warning"></i>
+          <div>
+            <h5 class="modal-title font-serif fw-bold text-white mb-0" id="aiGeneratorModalLabel">AI Writing Assistant</h5>
+            <div class="text-white-50 small">Editorial Storyteller Companion</div>
+          </div>
+        </div>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body p-4 bg-light">
+        <!-- Input section -->
+        <div class="card border-0 rounded-3 p-3 bg-white shadow-sm mb-3">
+          <label for="aiTopicInput" class="form-label fw-bold text-dark small mb-1">What would you like to write about?</label>
+          <div class="input-group mb-2">
+            <input type="text" id="aiTopicInput" class="form-control" placeholder="e.g. Benefits of learning Python for beginners in 2026">
+            <button class="btn btn-success px-4" id="aiGenerateBtn" type="button" style="background-color: #166534; border-color: #166534;">
+              <span id="aiBtnText"><i class="bi bi-magic me-1"></i> Generate</span>
+              <span id="aiBtnSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+            </button>
+          </div>
+          <div class="form-text text-muted" style="font-size: 0.75rem;">
+            Tip: Be specific! Gemini will generate a catchy title, short description, and structured article.
+          </div>
+        </div>
+
+        <!-- Generated Result Section (Hidden initially) -->
+        <div id="aiResultCard" class="card border-0 rounded-3 p-4 bg-white shadow-sm d-none">
+          <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+            <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded-pill small">
+              <i class="bi bi-check2-circle me-1"></i> Generated Successfully
+            </span>
+            <button type="button" class="btn btn-sm btn-success rounded-pill px-3 fw-medium" id="aiApplyAllBtn" style="background-color: #166534; border-color: #166534;">
+              <i class="bi bi-arrow-down-circle me-1"></i> Use Generated Content in Editor
+            </button>
+          </div>
+
+          <!-- Generated Title -->
+          <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span class="text-muted small fw-bold text-uppercase" style="font-size: 0.72rem;">Suggested Title:</span>
+              <button type="button" class="btn btn-link btn-sm text-decoration-none p-0 text-success copy-btn" data-target="generatedTitleText">
+                <i class="bi bi-clipboard"></i> Copy
+              </button>
+            </div>
+            <div class="p-2 rounded bg-light border fw-semibold font-serif" id="generatedTitleText"></div>
+          </div>
+
+          <!-- Generated Description -->
+          <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span class="text-muted small fw-bold text-uppercase" style="font-size: 0.72rem;">Short Description:</span>
+              <button type="button" class="btn btn-link btn-sm text-decoration-none p-0 text-success copy-btn" data-target="generatedDescText">
+                <i class="bi bi-clipboard"></i> Copy
+              </button>
+            </div>
+            <div class="p-2 rounded bg-light border small text-secondary" id="generatedDescText"></div>
+          </div>
+
+          <!-- Generated Content Preview -->
+          <div class="mb-2">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span class="text-muted small fw-bold text-uppercase" style="font-size: 0.72rem;">Article Content:</span>
+              <button type="button" class="btn btn-link btn-sm text-decoration-none p-0 text-success copy-btn" data-target="generatedContentHtml">
+                <i class="bi bi-clipboard"></i> Copy
+              </button>
+            </div>
+            <div class="p-3 rounded bg-light border small text-dark overflow-auto" style="max-height: 220px;" id="generatedContentPreview"></div>
+            <!-- Raw HTML stored hidden -->
+            <textarea id="generatedContentHtml" class="d-none"></textarea>
+          </div>
+        </div>
+
+        <!-- Error Alert -->
+        <div id="aiErrorAlert" class="alert alert-danger d-none mt-3" role="alert"></div>
+      </div>
+
+      <div class="modal-footer bg-light border-top p-3">
+        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Character count for description
+  const descInput = document.getElementById('id_description');
+  const descCount = document.getElementById('descCharCount');
+  if (descInput && descCount) {
+    const updateCount = () => {
+      descCount.textContent = `${descInput.value.length}/200`;
+    };
+    descInput.addEventListener('input', updateCount);
+    updateCount();
+  }
+
+  // Cover Image Preview Dropzone
+  const imageInput = document.getElementById('id_cover_image');
+  const dropzonePrompt = document.getElementById('dropzonePrompt');
+  const dropzonePreview = document.getElementById('dropzonePreview');
+  const previewImg = document.getElementById('imagePreviewElement');
+  const previewName = document.getElementById('previewFileName');
+  const removeBtn = document.getElementById('removeImageBtn');
+
+  if (imageInput) {
+    imageInput.addEventListener('change', function(e) {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          previewImg.src = event.target.result;
+          previewName.textContent = file.name;
+          dropzonePrompt.classList.add('d-none');
+          dropzonePreview.classList.remove('d-none');
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    if (removeBtn) {
+      removeBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        imageInput.value = '';
+        dropzonePreview.classList.add('d-none');
+        dropzonePrompt.classList.remove('d-none');
+      });
+    }
+  }
+
+  // Formatting Toolbar Helper
+  document.querySelectorAll('.editor-toolbar button[data-cmd]').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const cmd = this.getAttribute('data-cmd');
+      const textarea = document.getElementById('id_content');
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const selected = textarea.value.substring(start, end);
+
+      let replacement = '';
+      switch(cmd) {
+        case 'bold': replacement = `<strong>${selected || 'bold text'}</strong>`; break;
+        case 'italic': replacement = `<em>${selected || 'italic text'}</em>`; break;
+        case 'underline': replacement = `<u>${selected || 'underlined text'}</u>`; break;
+        case 'h1': replacement = `\n<h1>${selected || 'Heading 1'}</h1>\n`; break;
+        case 'h2': replacement = `\n<h2>${selected || 'Heading 2'}</h2>\n`; break;
+        case 'h3': replacement = `\n<h3>${selected || 'Heading 3'}</h3>\n`; break;
+        case 'ul': replacement = `\n<ul>\n  <li>${selected || 'List item'}</li>\n</ul>\n`; break;
+        case 'ol': replacement = `\n<ol>\n  <li>${selected || 'Numbered item'}</li>\n</ol>\n`; break;
+        case 'quote': replacement = `\n<blockquote>${selected || 'Inspiring quote'}</blockquote>\n`; break;
+        case 'link': replacement = `<a href="https://example.com">${selected || 'link text'}</a>`; break;
+        case 'code': replacement = `\n<pre><code>${selected || '# Python code snippet'}</code></pre>\n`; break;
+      }
+
+      textarea.setRangeText(replacement, start, end, 'end');
+      textarea.focus();
+    });
+  });
+
+  // AI Modal Generation Logic
+  const aiGenerateBtn = document.getElementById('aiGenerateBtn');
+  const aiTopicInput = document.getElementById('aiTopicInput');
+  const aiBtnText = document.getElementById('aiBtnText');
+  const aiBtnSpinner = document.getElementById('aiBtnSpinner');
+  const aiResultCard = document.getElementById('aiResultCard');
+  const aiErrorAlert = document.getElementById('aiErrorAlert');
+  const aiApplyAllBtn = document.getElementById('aiApplyAllBtn');
+
+  if (aiGenerateBtn) {
+    aiGenerateBtn.addEventListener('click', async () => {
+      const topic = aiTopicInput.value.trim();
+      const category = document.getElementById('id_category').value || 'Technology';
+      if (!topic) {
+        aiErrorAlert.textContent = "Please enter a topic to generate content.";
+        aiErrorAlert.classList.remove('d-none');
+        return;
+      }
+
+      aiErrorAlert.classList.add('d-none');
+      aiBtnText.classList.add('d-none');
+      aiBtnSpinner.classList.remove('d-none');
+      aiGenerateBtn.disabled = true;
+
+      try {
+        const response = await fetch('/chatbot/generate-blog/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
+          },
+          body: JSON.stringify({ topic, category })
+        });
+
+        const data = await response.json();
+        if (data.success && data.data) {
+          document.getElementById('generatedTitleText').textContent = data.data.title;
+          document.getElementById('generatedDescText').textContent = data.data.description;
+          document.getElementById('generatedContentPreview').innerHTML = data.data.content;
+          document.getElementById('generatedContentHtml').value = data.data.content;
+          aiResultCard.classList.remove('d-none');
+        } else {
+          aiErrorAlert.textContent = data.error || "Failed to generate blog content.";
+          aiErrorAlert.classList.remove('d-none');
+        }
+      } catch (err) {
+        aiErrorAlert.textContent = "Network error while connecting to Gemini assistant: " + err.message;
+        aiErrorAlert.classList.remove('d-none');
+      } finally {
+        aiBtnText.classList.remove('d-none');
+        aiBtnSpinner.classList.add('d-none');
+        aiGenerateBtn.disabled = false;
+      }
+    });
+
+    // Apply Generated Content to Form
+    if (aiApplyAllBtn) {
+      aiApplyAllBtn.addEventListener('click', () => {
+        document.getElementById('id_title').value = document.getElementById('generatedTitleText').textContent;
+        document.getElementById('id_description').value = document.getElementById('generatedDescText').textContent;
+        document.getElementById('id_content').value = document.getElementById('generatedContentHtml').value;
+        if (descCount) descCount.textContent = `${document.getElementById('id_description').value.length}/200`;
+
+        const modalEl = document.getElementById('aiGeneratorModal');
+        const modal = bootstrap.Modal.getInstance(modalEl);
+        if (modal) modal.hide();
+      });
+    }
+
+    // Copy Buttons helper
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const targetId = this.getAttribute('data-target');
+        const el = document.getElementById(targetId);
+        const text = el.tagName === 'TEXTAREA' ? el.value : el.innerText;
+        navigator.clipboard.writeText(text);
+        const originalText = this.innerHTML;
+        this.innerHTML = '<i class="bi bi-check2"></i> Copied!';
+        setTimeout(() => { this.innerHTML = originalText; }, 2000);
+      });
+    });
+  }
+
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Blog – {{ blog.title }} – INKSPACE{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Header with Back Link -->
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div class="d-flex align-items-center gap-3">
+      <a href="{% url 'blogs:my_blogs' %}" class="btn btn-sm btn-light rounded-circle text-dark p-2 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" title="Back to My Blogs">
+        <i class="bi bi-arrow-left"></i>
+      </a>
+      <h1 class="h3 fw-bold font-serif mb-0 text-dark">Edit Blog</h1>
+    </div>
+
+    <!-- AI Writing Assistant Trigger Button -->
+    <button type="button" class="btn btn-outline-success d-inline-flex align-items-center gap-2 rounded-pill px-3 py-2 fw-medium shadow-sm" data-bs-toggle="modal" data-bs-target="#aiGeneratorModal" style="color: #166534; border-color: #166534;">
+      <i class="bi bi-stars text-success"></i>
+      <span>Assist with AI</span>
+    </button>
+  </div>
+
+  <form method="post" enctype="multipart/form-data" id="blogPostForm" novalidate>
+    {% csrf_token %}
+
+    <div class="row g-4">
+      
+      <!-- Main Content Editor Column (Left) -->
+      <div class="col-lg-8">
+        <div class="card border-0 rounded-4 shadow-sm p-4 p-md-5 bg-white">
+          
+          <!-- Title Input -->
+          <div class="mb-4">
+            <label for="id_title" class="form-label fw-bold text-dark font-serif fs-5">Title <span class="text-danger">*</span></label>
+            <input type="text" name="title" id="id_title" value="{{ form.title.value|default:blog.title }}" class="form-control form-control-lg font-serif border rounded-3 py-3 px-3 fs-4" placeholder="Enter a catchy title for your blog" required>
+            {% if form.title.errors %}
+              <div class="text-danger small mt-1">{{ form.title.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          <!-- Short Description -->
+          <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <label for="id_description" class="form-label fw-semibold text-secondary small">Short Description <span class="text-danger">*</span></label>
+              <span class="text-muted small" id="descCharCount">0/200</span>
+            </div>
+            <textarea name="description" id="id_description" rows="3" class="form-control rounded-3" placeholder="Write a short summary (max 200 characters)" maxlength="250" required>{{ form.description.value|default:blog.description }}</textarea>
+            {% if form.description.errors %}
+              <div class="text-danger small mt-1">{{ form.description.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          <!-- Category Selection -->
+          <div class="mb-4">
+            <label for="id_category" class="form-label fw-semibold text-secondary small">Category <span class="text-danger">*</span></label>
+            <select name="category" id="id_category" class="form-select rounded-3 py-2" required>
+              <option value="Travel" {% if blog.category == 'Travel' %}selected{% endif %}>Travel</option>
+              <option value="Technology" {% if blog.category == 'Technology' %}selected{% endif %}>Technology</option>
+              <option value="Lifestyle" {% if blog.category == 'Lifestyle' %}selected{% endif %}>Lifestyle</option>
+              <option value="Food" {% if blog.category == 'Food' %}selected{% endif %}>Food</option>
+              <option value="Education" {% if blog.category == 'Education' %}selected{% endif %}>Education</option>
+              <option value="Health" {% if blog.category == 'Health' %}selected{% endif %}>Health</option>
+            </select>
+          </div>
+
+          <!-- Main Content with Editorial Formatting Toolbar -->
+          <div class="mb-2">
+            <label for="id_content" class="form-label fw-semibold text-secondary small">Content <span class="text-danger">*</span></label>
+            
+            <!-- Formatting Toolbar -->
+            <div class="editor-toolbar bg-light border border-bottom-0 rounded-top-3 p-2 d-flex flex-wrap align-items-center gap-1">
+              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="bold" title="Bold"><i class="bi bi-type-bold"></i></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="italic" title="Italic"><i class="bi bi-type-italic"></i></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="underline" title="Underline"><i class="bi bi-type-underline"></i></button>
+              <div class="vr mx-1 my-1"></div>
+              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="h1" title="Heading 1"><span class="fw-bold">H1</span></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="h2" title="Heading 2"><span class="fw-bold">H2</span></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="h3" title="Heading 3"><span class="fw-bold">H3</span></button>
+              <div class="vr mx-1 my-1"></div>
+              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="ul" title="Bullet List"><i class="bi bi-list-ul"></i></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="ol" title="Numbered List"><i class="bi bi-list-ol"></i></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="quote" title="Blockquote"><i class="bi bi-quote"></i></button>
+              <div class="vr mx-1 my-1"></div>
+              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="link" title="Insert Link"><i class="bi bi-link-45deg"></i></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="code" title="Code Block"><i class="bi bi-code-slash"></i></button>
+            </div>
+
+            <!-- Content Textarea -->
+            <textarea name="content" id="id_content" rows="14" class="form-control rounded-bottom-3 border-top-0 font-sans p-3" placeholder="Start writing your blog here..." style="min-height: 340px; font-size: 1rem; line-height: 1.6;" required>{{ form.content.value|default:blog.content }}</textarea>
+            {% if form.content.errors %}
+              <div class="text-danger small mt-1">{{ form.content.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Sidebar Options Column (Right) -->
+      <div class="col-lg-4">
+        
+        <!-- Cover Image Upload Box -->
+        <div class="card border-0 rounded-4 shadow-sm p-4 bg-white mb-4">
+          <label class="form-label fw-bold text-dark font-serif fs-6 mb-2">Cover Image <span class="text-danger">*</span></label>
+          
+          <div class="upload-dropzone border rounded-3 p-3 text-center bg-light position-relative">
+            {% if blog.cover_image %}
+              <div class="position-relative mb-2">
+                <img id="imagePreviewElement" src="{{ blog.get_cover_image_url }}" alt="{{ blog.title }}" class="img-fluid rounded-2 object-fit-cover w-100" style="max-height: 180px;">
+              </div>
+            {% endif %}
+            
+            <input type="file" name="cover_image" id="id_cover_image" class="form-control form-control-sm mt-2" accept="image/*">
+            <div class="text-muted mt-1" style="font-size: 0.72rem;">Upload a new image to replace current cover</div>
+          </div>
+        </div>
+
+        <!-- Publish Options -->
+        <div class="card border-0 rounded-4 shadow-sm p-4 bg-white mb-4">
+          <label class="form-label fw-bold text-dark font-serif fs-6 mb-3">Publish Options</label>
+
+          <div class="form-check mb-3 p-3 rounded-3 border bg-light bg-opacity-50">
+            <input class="form-check-input" type="radio" name="status" id="statusDraft" value="Draft" {% if blog.status == 'Draft' %}checked{% endif %}>
+            <label class="form-check-label ms-2" for="statusDraft">
+              <strong class="d-block text-dark">Save as Draft</strong>
+              <span class="text-muted small">Keep it private and edit later.</span>
+            </label>
+          </div>
+
+          <div class="form-check p-3 rounded-3 border bg-light bg-opacity-50">
+            <input class="form-check-input" type="radio" name="status" id="statusPublished" value="Published" {% if blog.status == 'Published' %}checked{% endif %}>
+            <label class="form-check-label ms-2" for="statusPublished">
+              <strong class="d-block text-dark">Publish Now</strong>
+              <span class="text-muted small">Make it live for everyone to read.</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Action Submission Buttons -->
+        <div class="d-flex gap-3">
+          <button type="submit" name="action" value="draft" class="btn btn-outline-secondary flex-grow-1 py-2 rounded-pill fw-medium">
+            Save Changes
+          </button>
+          <button type="submit" name="action" value="publish" class="btn btn-success flex-grow-1 py-2 rounded-pill fw-medium shadow-sm" style="background-color: #166534; border-color: #166534;">
+            Update Blog
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+  </form>
+
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}500 Server Error – INKSPACE{% endblock %}
+
+{% block content %}
+<div class="container py-5 text-center my-auto">
+  <div class="py-5">
+    <div class="display-1 fw-bold text-danger" style="font-family: 'Lora', Georgia, serif;">500</div>
+    <h1 class="h2 fw-bold mt-3 text-dark">Something Went Wrong</h1>
+    <p class="text-muted mt-2 mx-auto" style="max-width: 480px;">
+      An unexpected internal server error occurred while processing your request. Our team has been notified.
+    </p>
+    <div class="mt-4">
+      <a href="{% url 'blogs:blog_list' %}" class="btn btn-success px-4 py-2 rounded-pill" style="background-color: #166534;">Return Home</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
