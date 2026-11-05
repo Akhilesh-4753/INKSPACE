@@ -71,28 +71,32 @@
 
           <!-- Main Content with Editorial Formatting Toolbar -->
           <div class="mb-2">
-            <label for="id_content" class="form-label fw-semibold text-secondary small">Content <span class="text-danger">*</span></label>
+            <label for="editorContent" class="form-label fw-semibold text-secondary small">Content <span class="text-danger">*</span></label>
             
             <!-- Formatting Toolbar -->
-            <div class="editor-toolbar bg-light border border-bottom-0 rounded-top-3 p-2 d-flex flex-wrap align-items-center gap-1">
-              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="bold" title="Bold"><i class="bi bi-type-bold"></i></button>
-              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="italic" title="Italic"><i class="bi bi-type-italic"></i></button>
-              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="underline" title="Underline"><i class="bi bi-type-underline"></i></button>
+            <div class="editor-toolbar bg-light border border-bottom-0 rounded-top-3 p-2 d-flex flex-wrap align-items-center gap-1" id="editorToolbar">
+              <button type="button" class="btn btn-sm btn-white border bg-white editor-btn" data-action="bold" title="Bold (Ctrl+B)"><i class="bi bi-type-bold"></i></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white editor-btn" data-action="italic" title="Italic (Ctrl+I)"><i class="bi bi-type-italic"></i></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white editor-btn" data-action="underline" title="Underline (Ctrl+U)"><i class="bi bi-type-underline"></i></button>
               <div class="vr mx-1 my-1"></div>
-              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="h1" title="Heading 1"><span class="fw-bold">H1</span></button>
-              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="h2" title="Heading 2"><span class="fw-bold">H2</span></button>
-              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="h3" title="Heading 3"><span class="fw-bold">H3</span></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white editor-btn" data-action="h1" title="Heading 1"><span class="fw-bold">H1</span></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white editor-btn" data-action="h2" title="Heading 2"><span class="fw-bold">H2</span></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white editor-btn" data-action="h3" title="Heading 3"><span class="fw-bold">H3</span></button>
               <div class="vr mx-1 my-1"></div>
-              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="ul" title="Bullet List"><i class="bi bi-list-ul"></i></button>
-              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="ol" title="Numbered List"><i class="bi bi-list-ol"></i></button>
-              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="quote" title="Blockquote"><i class="bi bi-quote"></i></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white editor-btn" data-action="ul" title="Bullet List"><i class="bi bi-list-ul"></i></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white editor-btn" data-action="ol" title="Numbered List"><i class="bi bi-list-ol"></i></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white editor-btn" data-action="quote" title="Blockquote"><i class="bi bi-quote"></i></button>
               <div class="vr mx-1 my-1"></div>
-              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="link" title="Insert Link"><i class="bi bi-link-45deg"></i></button>
-              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="code" title="Code Block"><i class="bi bi-code-slash"></i></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white editor-btn" data-action="link" title="Insert Link"><i class="bi bi-link-45deg"></i></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white editor-btn" data-action="code" title="Code Block"><i class="bi bi-code-slash"></i></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white editor-btn" data-action="clear" title="Clear Formatting"><i class="bi bi-eraser"></i></button>
             </div>
 
-            <!-- Content Textarea -->
-            <textarea name="content" id="id_content" rows="14" class="form-control rounded-bottom-3 border-top-0 font-sans p-3" placeholder="Start writing your blog here..." style="min-height: 340px; font-size: 1rem; line-height: 1.6;" required>{{ form.content.value|default:'' }}</textarea>
+            <!-- Contenteditable Visual Editor -->
+            <div id="editorContent" class="rich-text-editor" contenteditable="true" data-placeholder="Start writing your story here...">{{ form.content.value|default:''|safe }}</div>
+
+            <!-- Hidden Content Textarea for Django ModelForm POST -->
+            <textarea name="content" id="id_content" class="d-none" required>{{ form.content.value|default:'' }}</textarea>
             {% if form.content.errors %}
               <div class="text-danger small mt-1">{{ form.content.errors.0 }}</div>
             {% endif %}
@@ -257,6 +261,7 @@
 {% endblock %}
 
 {% block extra_js %}
+<script src="{% static 'js/editor.js' %}"></script>
 <script>
   // Character count for description
   const descInput = document.getElementById('id_description');
@@ -302,35 +307,6 @@
       });
     }
   }
-
-  // Formatting Toolbar Helper
-  document.querySelectorAll('.editor-toolbar button[data-cmd]').forEach(btn => {
-    btn.addEventListener('click', function() {
-      const cmd = this.getAttribute('data-cmd');
-      const textarea = document.getElementById('id_content');
-      const start = textarea.selectionStart;
-      const end = textarea.selectionEnd;
-      const selected = textarea.value.substring(start, end);
-
-      let replacement = '';
-      switch(cmd) {
-        case 'bold': replacement = `<strong>${selected || 'bold text'}</strong>`; break;
-        case 'italic': replacement = `<em>${selected || 'italic text'}</em>`; break;
-        case 'underline': replacement = `<u>${selected || 'underlined text'}</u>`; break;
-        case 'h1': replacement = `\n<h1>${selected || 'Heading 1'}</h1>\n`; break;
-        case 'h2': replacement = `\n<h2>${selected || 'Heading 2'}</h2>\n`; break;
-        case 'h3': replacement = `\n<h3>${selected || 'Heading 3'}</h3>\n`; break;
-        case 'ul': replacement = `\n<ul>\n  <li>${selected || 'List item'}</li>\n</ul>\n`; break;
-        case 'ol': replacement = `\n<ol>\n  <li>${selected || 'Numbered item'}</li>\n</ol>\n`; break;
-        case 'quote': replacement = `\n<blockquote>${selected || 'Inspiring quote'}</blockquote>\n`; break;
-        case 'link': replacement = `<a href="https://example.com">${selected || 'link text'}</a>`; break;
-        case 'code': replacement = `\n<pre><code>${selected || '# Python code snippet'}</code></pre>\n`; break;
-      }
-
-      textarea.setRangeText(replacement, start, end, 'end');
-      textarea.focus();
-    });
-  });
 
   // AI Modal Generation Logic
   const aiGenerateBtn = document.getElementById('aiGenerateBtn');
@@ -387,13 +363,26 @@
       }
     });
 
-    // Apply Generated Content to Form
+    // Apply Generated Content to Form & Rich Text Editor
     if (aiApplyAllBtn) {
       aiApplyAllBtn.addEventListener('click', () => {
-        document.getElementById('id_title').value = document.getElementById('generatedTitleText').textContent;
-        document.getElementById('id_description').value = document.getElementById('generatedDescText').textContent;
-        document.getElementById('id_content').value = document.getElementById('generatedContentHtml').value;
-        if (descCount) descCount.textContent = `${document.getElementById('id_description').value.length}/200`;
+        const genTitle = document.getElementById('generatedTitleText').textContent;
+        const genDesc = document.getElementById('generatedDescText').textContent;
+        const genContent = document.getElementById('generatedContentHtml').value;
+
+        document.getElementById('id_title').value = genTitle;
+        document.getElementById('id_description').value = genDesc;
+        
+        // Sync into both rich-text editor and hidden form textarea
+        if (typeof window.setEditorContent === 'function') {
+          window.setEditorContent(genContent);
+        } else {
+          const editorDiv = document.getElementById('editorContent');
+          if (editorDiv) editorDiv.innerHTML = genContent;
+          document.getElementById('id_content').value = genContent;
+        }
+
+        if (descCount) descCount.textContent = `${genDesc.length}/200`;
 
         const modalEl = document.getElementById('aiGeneratorModal');
         const modal = bootstrap.Modal.getInstance(modalEl);

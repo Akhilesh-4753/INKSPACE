@@ -67,28 +67,32 @@
 
           <!-- Main Content with Editorial Formatting Toolbar -->
           <div class="mb-2">
-            <label for="id_content" class="form-label fw-semibold text-secondary small">Content <span class="text-danger">*</span></label>
+            <label for="editorContent" class="form-label fw-semibold text-secondary small">Content <span class="text-danger">*</span></label>
             
             <!-- Formatting Toolbar -->
-            <div class="editor-toolbar bg-light border border-bottom-0 rounded-top-3 p-2 d-flex flex-wrap align-items-center gap-1">
-              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="bold" title="Bold"><i class="bi bi-type-bold"></i></button>
-              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="italic" title="Italic"><i class="bi bi-type-italic"></i></button>
-              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="underline" title="Underline"><i class="bi bi-type-underline"></i></button>
+            <div class="editor-toolbar bg-light border border-bottom-0 rounded-top-3 p-2 d-flex flex-wrap align-items-center gap-1" id="editorToolbar">
+              <button type="button" class="btn btn-sm btn-white border bg-white editor-btn" data-action="bold" title="Bold (Ctrl+B)"><i class="bi bi-type-bold"></i></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white editor-btn" data-action="italic" title="Italic (Ctrl+I)"><i class="bi bi-type-italic"></i></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white editor-btn" data-action="underline" title="Underline (Ctrl+U)"><i class="bi bi-type-underline"></i></button>
               <div class="vr mx-1 my-1"></div>
-              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="h1" title="Heading 1"><span class="fw-bold">H1</span></button>
-              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="h2" title="Heading 2"><span class="fw-bold">H2</span></button>
-              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="h3" title="Heading 3"><span class="fw-bold">H3</span></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white editor-btn" data-action="h1" title="Heading 1"><span class="fw-bold">H1</span></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white editor-btn" data-action="h2" title="Heading 2"><span class="fw-bold">H2</span></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white editor-btn" data-action="h3" title="Heading 3"><span class="fw-bold">H3</span></button>
               <div class="vr mx-1 my-1"></div>
-              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="ul" title="Bullet List"><i class="bi bi-list-ul"></i></button>
-              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="ol" title="Numbered List"><i class="bi bi-list-ol"></i></button>
-              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="quote" title="Blockquote"><i class="bi bi-quote"></i></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white editor-btn" data-action="ul" title="Bullet List"><i class="bi bi-list-ul"></i></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white editor-btn" data-action="ol" title="Numbered List"><i class="bi bi-list-ol"></i></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white editor-btn" data-action="quote" title="Blockquote"><i class="bi bi-quote"></i></button>
               <div class="vr mx-1 my-1"></div>
-              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="link" title="Insert Link"><i class="bi bi-link-45deg"></i></button>
-              <button type="button" class="btn btn-sm btn-white border bg-white" data-cmd="code" title="Code Block"><i class="bi bi-code-slash"></i></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white editor-btn" data-action="link" title="Insert Link"><i class="bi bi-link-45deg"></i></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white editor-btn" data-action="code" title="Code Block"><i class="bi bi-code-slash"></i></button>
+              <button type="button" class="btn btn-sm btn-white border bg-white editor-btn" data-action="clear" title="Clear Formatting"><i class="bi bi-eraser"></i></button>
             </div>
 
-            <!-- Content Textarea -->
-            <textarea name="content" id="id_content" rows="14" class="form-control rounded-bottom-3 border-top-0 font-sans p-3" placeholder="Start writing your blog here..." style="min-height: 340px; font-size: 1rem; line-height: 1.6;" required>{{ form.content.value|default:blog.content }}</textarea>
+            <!-- Contenteditable Visual Editor -->
+            <div id="editorContent" class="rich-text-editor" contenteditable="true" data-placeholder="Start writing your blog here...">{{ form.content.value|default:blog.content|safe }}</div>
+
+            <!-- Hidden Content Textarea for Django ModelForm POST -->
+            <textarea name="content" id="id_content" class="d-none" required>{{ form.content.value|default:blog.content }}</textarea>
             {% if form.content.errors %}
               <div class="text-danger small mt-1">{{ form.content.errors.0 }}</div>
             {% endif %}
@@ -153,4 +157,239 @@
   </form>
 
 </div>
+
+<!-- ================= AI GENERATOR MODAL ================= -->
+<div class="modal fade" id="aiGeneratorModal" tabindex="-1" aria-labelledby="aiGeneratorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content rounded-4 border-0 shadow">
+      
+      <div class="modal-header border-bottom p-4" style="background: linear-gradient(135deg, #C65D24 0%, #9A3412 100%);">
+        <div class="d-flex align-items-center gap-2 text-white">
+          <i class="bi bi-stars fs-4 text-warning"></i>
+          <div>
+            <h5 class="modal-title font-serif fw-bold text-white mb-0" id="aiGeneratorModalLabel">AI Writing Assistant</h5>
+            <div class="text-white-50 small">Editorial Storyteller Companion</div>
+          </div>
+        </div>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body p-4" style="background-color: #FFFDF9;">
+        <!-- Input section -->
+        <div class="card border rounded-3 p-3 bg-white shadow-sm mb-3">
+          <label for="aiTopicInput" class="form-label fw-bold text-dark small mb-1">What would you like assistance with?</label>
+          <div class="input-group mb-2">
+            <input type="text" id="aiTopicInput" class="form-control" placeholder="e.g. Expand on the benefits or rewrite section...">
+            <button class="btn btn-orange-primary px-4" id="aiGenerateBtn" type="button" style="background-color: #C65D24; border-color: #C65D24;">
+              <span id="aiBtnText"><i class="bi bi-magic me-1"></i> Generate</span>
+              <span id="aiBtnSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+            </button>
+          </div>
+          <div class="form-text text-muted" style="font-size: 0.75rem;">
+            Tip: Gemini will generate updated suggestions that you can insert into your editor.
+          </div>
+        </div>
+
+        <!-- Generated Result Section (Hidden initially) -->
+        <div id="aiResultCard" class="card border rounded-3 p-4 bg-white shadow-sm d-none">
+          <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+            <span class="badge rounded-pill px-2 py-1 small" style="background-color: #FFEDD5; color: #C65D24; border: 1px solid #FDBA74;">
+              <i class="bi bi-check2-circle me-1"></i> Generated Successfully
+            </span>
+            <button type="button" class="btn btn-sm btn-orange-primary rounded-pill px-3 fw-medium" id="aiApplyAllBtn" style="background-color: #C65D24; border-color: #C65D24;">
+              <i class="bi bi-arrow-down-circle me-1"></i> Use Generated Content in Editor
+            </button>
+          </div>
+
+          <!-- Generated Title -->
+          <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span class="text-muted small fw-bold text-uppercase" style="font-size: 0.72rem;">Suggested Title:</span>
+              <button type="button" class="btn btn-link btn-sm text-decoration-none p-0 copy-btn" data-target="generatedTitleText" style="color: #C65D24;">
+                <i class="bi bi-clipboard"></i> Copy
+              </button>
+            </div>
+            <div class="p-2 rounded border fw-semibold font-serif" id="generatedTitleText" style="background-color: #FFF7ED;"></div>
+          </div>
+
+          <!-- Generated Description -->
+          <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span class="text-muted small fw-bold text-uppercase" style="font-size: 0.72rem;">Short Description:</span>
+              <button type="button" class="btn btn-link btn-sm text-decoration-none p-0 copy-btn" data-target="generatedDescText" style="color: #C65D24;">
+                <i class="bi bi-clipboard"></i> Copy
+              </button>
+            </div>
+            <div class="p-2 rounded border small text-secondary" id="generatedDescText" style="background-color: #FFF7ED;"></div>
+          </div>
+
+          <!-- Generated Content Preview -->
+          <div class="mb-2">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span class="text-muted small fw-bold text-uppercase" style="font-size: 0.72rem;">Article Content:</span>
+              <button type="button" class="btn btn-link btn-sm text-decoration-none p-0 copy-btn" data-target="generatedContentHtml" style="color: #C65D24;">
+                <i class="bi bi-clipboard"></i> Copy
+              </button>
+            </div>
+            <div class="p-3 rounded border small text-dark overflow-auto" style="max-height: 220px; background-color: #FFF7ED;" id="generatedContentPreview"></div>
+            <!-- Raw HTML stored hidden -->
+            <textarea id="generatedContentHtml" class="d-none"></textarea>
+          </div>
+        </div>
+
+        <!-- Error Alert -->
+        <div id="aiErrorAlert" class="alert alert-danger d-none mt-3" role="alert"></div>
+      </div>
+
+      <div class="modal-footer border-top p-3" style="background-color: #FFFDF9;">
+        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/editor.js' %}"></script>
+<script>
+  // Character count for description
+  const descInput = document.getElementById('id_description');
+  const descCount = document.getElementById('descCharCount');
+  if (descInput && descCount) {
+    const updateCount = () => {
+      descCount.textContent = `${descInput.value.length}/200`;
+    };
+    descInput.addEventListener('input', updateCount);
+    updateCount();
+  }
+
+  // Cover Image Preview
+  const imageInput = document.getElementById('id_cover_image');
+  const previewImg = document.getElementById('imagePreviewElement');
+
+  if (imageInput && previewImg) {
+    imageInput.addEventListener('change', function(e) {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          previewImg.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+
+  // AI Modal Generation Logic
+  const aiGenerateBtn = document.getElementById('aiGenerateBtn');
+  const aiTopicInput = document.getElementById('aiTopicInput');
+  const aiBtnText = document.getElementById('aiBtnText');
+  const aiBtnSpinner = document.getElementById('aiBtnSpinner');
+  const aiResultCard = document.getElementById('aiResultCard');
+  const aiErrorAlert = document.getElementById('aiErrorAlert');
+  const aiApplyAllBtn = document.getElementById('aiApplyAllBtn');
+
+  if (aiGenerateBtn) {
+    aiGenerateBtn.addEventListener('click', async () => {
+      const topic = aiTopicInput.value.trim();
+      const category = document.getElementById('id_category') ? document.getElementById('id_category').value : 'Technology';
+      if (!topic) {
+        aiErrorAlert.textContent = "Please enter a topic to generate content.";
+        aiErrorAlert.classList.remove('d-none');
+        return;
+      }
+
+      aiErrorAlert.classList.add('d-none');
+      aiBtnText.classList.add('d-none');
+      aiBtnSpinner.classList.remove('d-none');
+      aiGenerateBtn.disabled = true;
+
+      try {
+        const response = await fetch('/chatbot/generate-blog/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
+          },
+          body: JSON.stringify({ topic, category })
+        });
+
+        const data = await response.json();
+        if (data.success && data.data) {
+          document.getElementById('generatedTitleText').textContent = data.data.title;
+          document.getElementById('generatedDescText').textContent = data.data.description;
+          document.getElementById('generatedContentPreview').innerHTML = data.data.content;
+          document.getElementById('generatedContentHtml').value = data.data.content;
+          aiResultCard.classList.remove('d-none');
+        } else {
+          aiErrorAlert.textContent = data.error || "Failed to generate blog content.";
+          aiErrorAlert.classList.remove('d-none');
+        }
+      } catch (err) {
+        aiErrorAlert.textContent = "Network error while connecting to Gemini assistant: " + err.message;
+        aiErrorAlert.classList.remove('d-none');
+      } finally {
+        aiBtnText.classList.remove('d-none');
+        aiBtnSpinner.classList.add('d-none');
+        aiGenerateBtn.disabled = false;
+      }
+    });
+
+    // Apply Generated Content to Form & Rich Text Editor
+    if (aiApplyAllBtn) {
+      aiApplyAllBtn.addEventListener('click', () => {
+        const genTitle = document.getElementById('generatedTitleText').textContent;
+        const genDesc = document.getElementById('generatedDescText').textContent;
+        const genContent = document.getElementById('generatedContentHtml').value;
+
+        if (document.getElementById('id_title')) document.getElementById('id_title').value = genTitle;
+        if (document.getElementById('id_description')) document.getElementById('id_description').value = genDesc;
+        
+        // Sync into both rich-text editor and hidden form textarea
+        if (typeof window.setEditorContent === 'function') {
+          window.setEditorContent(genContent);
+        } else {
+          const editorDiv = document.getElementById('editorContent');
+          if (editorDiv) editorDiv.innerHTML = genContent;
+          document.getElementById('id_content').value = genContent;
+        }
+
+        if (descCount && genDesc) descCount.textContent = `${genDesc.length}/200`;
+
+        const modalEl = document.getElementById('aiGeneratorModal');
+        const modal = bootstrap.Modal.getInstance(modalEl);
+        if (modal) modal.hide();
+      });
+    }
+
+    // Copy Buttons helper
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const targetId = this.getAttribute('data-target');
+        const el = document.getElementById(targetId);
+        const text = el.tagName === 'TEXTAREA' ? el.value : el.innerText;
+        navigator.clipboard.writeText(text);
+        const originalText = this.innerHTML;
+        this.innerHTML = '<i class="bi bi-check2"></i> Copied!';
+        setTimeout(() => { this.innerHTML = originalText; }, 2000);
+      });
+    });
+  }
+
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+</script>
 {% endblock %}

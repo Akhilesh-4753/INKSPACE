@@ -302,7 +302,33 @@ sequenceDiagram
 
 ---
 
-## 7. Frontend Design System
+## 7. Rich Text Visual Editor & HTML Sanitization
+
+To deliver a true Medium-like authoring experience without heavy third-party JavaScript dependencies, INKSPACE implements a custom **Visual Rich Text Editor** paired with robust server-side sanitization:
+
+### 1. Visual Contenteditable Architecture
+- **Interactive Editing Area**: Replaced the raw `<textarea>` with a styled `<div id="editorContent" contenteditable="true">` matching the warm editorial typography.
+- **Immediate Visual Formatting**: Formatting commands (Bold, Italic, Underline, H1, H2, H3, Bullet Lists, Numbered Lists, Blockquotes, Hyperlinks, Code Blocks) apply directly in the DOM. Authors see styled text visually rather than raw HTML markup like `<strong>text</strong>`.
+- **Selection Preservation**: Toolbar buttons use `e.preventDefault()` on `mousedown` to prevent the browser from blurring selection when clicking buttons.
+- **Active Toolbar State**: Real-time cursor tracking queries `document.queryCommandState` and highlights active buttons (e.g. bolded text illuminates the Bold toolbar button with the `#FFEDD5` orange active badge).
+- **Keyboard Shortcuts**: Native support for standard shortcuts (`Ctrl+B` for bold, `Ctrl+I` for italic, `Ctrl+U` for underline).
+- **Hyperlink & Code Snippet Handling**: Dynamic prompt dialog for validated URLs (`target="_blank"`, `rel="noopener noreferrer"`) and code block wrapping (`<code>` / `<pre><code>`).
+
+### 2. Transparent Django Form Synchronization
+- The contenteditable div automatically mirrors changes to a hidden `<textarea name="content" id="id_content">` on input, blur, keyup, and form submission.
+- Preserves Django's standard `ModelForm` POST lifecycle, CSRF handling, and validation errors with 100% backward compatibility.
+- Exposes `window.setEditorContent(html)` for seamless external population by the Gemini AI Assistant and generation modals.
+
+### 3. Server-Side Security via Bleach
+- All incoming HTML content is sanitized in `BlogForm.clean_content()` using Python's `bleach` library.
+- **Whitelisted Tags**: `p`, `br`, `strong`, `b`, `em`, `i`, `u`, `h1`, `h2`, `h3`, `h4`, `h5`, `h6`, `ul`, `ol`, `li`, `blockquote`, `a`, `code`, `pre`, `span`, `hr`.
+- **Whitelisted Attributes**: `href`, `title`, `target`, `rel` on links, `class` on code blocks.
+- **Disallowed Elements Stripped**: `<script>`, `<iframe>`, `object`, `onclick`, `onerror`, and dangerous URL schemes like `javascript:` are neutralized.
+- **Content Length Validation**: Validates actual plain-text word/character count (stripping tags) so empty formatting tags cannot bypass the minimum 30-character length requirement.
+
+---
+
+## 8. Frontend Design System
 
 - **Primary Orange**: `#C65D24` – Core brand color for primary CTA buttons, active states, brand emblem badges, and focus rings.
 - **Secondary Orange**: `#E87932` – Supporting warm tone for secondary accents and cards.

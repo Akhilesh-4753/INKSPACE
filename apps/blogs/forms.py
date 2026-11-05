@@ -1,6 +1,25 @@
+import re
+import bleach
 from django import forms
 from django.core.exceptions import ValidationError
 from .models import Blog, CategoryChoices, BlogStatus
+
+# Whitelist of safe HTML tags and attributes for the Rich Text Editor
+ALLOWED_TAGS = [
+    'p', 'br', 'strong', 'b', 'em', 'i', 'u',
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+    'ul', 'ol', 'li', 'blockquote', 'a', 'code', 'pre',
+    'span', 'hr'
+]
+
+ALLOWED_ATTRIBUTES = {
+    'a': ['href', 'title', 'target', 'rel'],
+    'code': ['class'],
+    'pre': ['class'],
+    'span': ['class'],
+}
+
+ALLOWED_PROTOCOLS = ['http', 'https', 'mailto']
 
 class BlogForm(forms.ModelForm):
     """
@@ -60,9 +79,24 @@ class BlogForm(forms.ModelForm):
 
     def clean_content(self):
         content = self.cleaned_data.get('content', '').strip()
-        if len(content) < 30:
+        if not content:
+            raise ValidationError("Blog content is required.")
+
+        # Sanitize HTML to prevent XSS attacks while preserving formatting
+        cleaned_html = bleach.clean(
+            content,
+            tags=ALLOWED_TAGS,
+            attributes=ALLOWED_ATTRIBUTES,
+            protocols=ALLOWED_PROTOCOLS,
+            strip=True
+        )
+
+        # Check visible text length (ignoring HTML tags)
+        plain_text = re.sub(r'<[^>]*>', '', cleaned_html).strip()
+        if len(plain_text) < 30:
             raise ValidationError("Blog content is too short. Please write at least 30 characters.")
-        return content
+
+        return cleaned_html
 
 class ContactForm(forms.Form):
     """

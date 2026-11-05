@@ -465,6 +465,12 @@
           const content = hiddenContent ? hiddenContent.value : (parsedData.content || rawText);
           if (contentInput) {
             contentInput.value = content;
+            if (typeof window.setEditorContent === 'function') {
+              window.setEditorContent(content);
+            } else {
+              const editorDiv = document.getElementById('editorContent');
+              if (editorDiv) editorDiv.innerHTML = content;
+            }
             contentInput.focus();
             showToast('Applied content to editor!');
             contentBtn.innerHTML = '<i class="bi bi-check2"></i> Applied!';
@@ -484,7 +490,15 @@
               descInput.value = parsedData.description;
               if (descCharCount) descCharCount.textContent = `${parsedData.description.length}/200`;
             }
-            if (parsedData.content) contentInput.value = parsedData.content;
+            if (parsedData.content) {
+              contentInput.value = parsedData.content;
+              if (typeof window.setEditorContent === 'function') {
+                window.setEditorContent(parsedData.content);
+              } else {
+                const editorDiv = document.getElementById('editorContent');
+                if (editorDiv) editorDiv.innerHTML = parsedData.content;
+              }
+            }
 
             showToast('All story content applied to editor!');
             applyAllBtn.innerHTML = '<i class="bi bi-check2-all"></i> Applied to Editor!';

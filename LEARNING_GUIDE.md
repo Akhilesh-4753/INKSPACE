@@ -285,7 +285,73 @@ class BlogForm(forms.ModelForm):
         if len(description) > 250:
             raise ValidationError("Description cannot exceed 250 characters.")
         return description
+
+    def clean_content(self):
+        content = self.cleaned_data.get('content', '').strip()
+        if not content:
+            raise ValidationError("Blog content is required.")
+
+        # Sanitize HTML to prevent Stored XSS attacks while preserving editorial formatting
+        cleaned_html = bleach.clean(
+            content,
+            tags=ALLOWED_TAGS,
+            attributes=ALLOWED_ATTRIBUTES,
+            protocols=ALLOWED_PROTOCOLS,
+            strip=True
+        )
+
+        # Check visible text length (ignoring HTML tags)
+        plain_text = re.sub(r'<[^>]*>', '', cleaned_html).strip()
+        if len(plain_text) < 30:
+            raise ValidationError("Blog content is too short. Please write at least 30 characters.")
+
+        return cleaned_html
 ```
+
+#### Why Server-Side Bleach Sanitization is Critical:
+1. **The Stored XSS Vulnerability**: When users submit formatted content, rendering `{{ blog.content|safe }}` in templates instructs Django to bypass its automatic HTML entity escaping. Without sanitization, an attacker could submit `<script>fetch('/steal-cookies?c='+document.cookie)</script>` or `<a href="javascript:alert(1)">Click here</a>`.
+2. **Whitelist-Based Defense**: Rather than trying to black-list dangerous tags (an impossible game of cat-and-mouse), `bleach.clean()` allows **only** explicitly permitted tags (`p`, `strong`, `em`, `u`, `h1`-`h3`, `ul`, `ol`, `li`, `blockquote`, `a`, `code`, `pre`) and safe attributes (`href`, `target`, `rel`).
+3. **Protocol Whitelisting**: Ensures `href` values only use `http`, `https`, or `mailto`, completely neutralizing dangerous schemes like `javascript:`.
+4. **Stripping Empty Tags**: By removing tags via regex (`re.sub(r'<[^>]*>', '', cleaned_html)`), authors cannot submit empty boilerplate like `<p><br></p>` to bypass minimum length validation.
+
+---
+
+### Rich Text Editor Mechanics: The `contenteditable` Bridge to Django
+
+A common challenge in Django web development is building a rich-text editor without loading bloated third-party dependencies (like TinyMCE, CKEditor, or Quill):
+
+```
++-------------------------------------------------------------+
+|                      USER INTERFACE                         |
+|                                                             |
+|  [Bold] [Italic] [H1] [H2] [List] [Quote] [Link] [Code]     |  <- Toolbar buttons
+|  +-------------------------------------------------------+  |
+|  | #editorContent (contenteditable="true")               |  |  <- Visual DOM
+|  | Displays bold text, headings, and lists visually      |  |
+|  +-------------------------------------------------------+  |
++-------------------------------------------------------------+
+                            │
+               Bidirectional sync via editor.js
+               (input, blur, keyup, form submit)
+                            ▼
++-------------------------------------------------------------+
+|  <textarea name="content" id="id_content" class="d-none">   |  <- Django ModelForm field
+|  Stores: "<h2>Heading</h2><p><strong>Bold</strong>...</p>"  |
++-------------------------------------------------------------+
+                            │
+                  Standard HTTP POST
+                            ▼
++-------------------------------------------------------------+
+|               Django View & BlogForm.is_valid()             |
+|               (Sanitized via Bleach, Saved to SQLite)       |
++-------------------------------------------------------------+
+```
+
+1. **Why `<textarea>` alone cannot do rich text**: A standard HTML `<textarea>` can only display unformatted plain text. Inserting `<strong>` into a textarea displays the literal characters `<strong>`.
+2. **Why `contenteditable="true"`**: A `<div>` with `contenteditable="true"` renders HTML as a rich document in real time.
+3. **Preserving Text Selection**: When clicking a button, browsers naturally move focus away from the text editor, destroying the user's highlighted selection. Calling `event.preventDefault()` inside the toolbar button's `mousedown` event prevents the editor from losing focus!
+4. **Active State Tracking**: By checking `document.queryCommandState('bold')` and `document.queryCommandValue('formatBlock')`, the toolbar automatically highlights active formatting pills when the cursor rests inside bold text or headings.
+5. **Form Integration**: The hidden `<textarea name="content" id="id_content">` seamlessly submits the generated HTML within Django's standard form POST request, keeping Django's MVT pipeline 100% standard and clean.
 
 #### How does Django form validation execute?
 1. User submits POST data.
